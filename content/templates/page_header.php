@@ -18,10 +18,4 @@
 <?php
 // Подключение главного меню
 include_once ('templates/page_menu.php');
-
-// Вывод заголовка страницы
-//if (isset($pageTitle) && (strlen($pageTitle) > 0)) {
-//    echo "<h1>$pageTitle</h1>";   
-//}
-
 ?>

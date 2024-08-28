@@ -4,9 +4,10 @@ $mainMenu = [
     ['title' => 'Заказы'                , 'link' => '/orders'],
     ['title' => 'Спецификации'          , 'link' => '/specifications'],
     ['title' => 'Материалы'             , 'link' => '/materials'],
-    ['title' => 'Справочники'           , 'link' => '/selectlists'],
-    ['title' => 'База данных'           , 'link' => '/db_info'],
-    ['title' => 'Редактирование данных' , 'link' => '/db_table_edit.php', 'second-menu' => 'tableMenu'],
+    ['title' => 'Справочники'           , 'link' => '/db/selectlists'],
+    ['title' => 'База данных'           , 'link' => '/db/info'],
+    ['title' => 'Редактирование данных' , 'link' => '/db/table_edit.php', 'second-menu' => 'tableMenu'],
+    ['title' => 'Request'               , 'link' => '/request-info'],
 ];
 
 $tableMenu = [

@@ -6,7 +6,7 @@ $errorMessage = '';
 if ($dbInfo['status'] == 'error') {
     $errorMessage .= '<div class="error"><h2>Ошибка</h2>' . implode('<br>', $dbInfo['message']);
     if ($dbInfo['connected'] == false) {
-        $errorMessage .= '<br><br><button onclick="location.href=\'db_create\';">Создать базу данных</button>';
+        $errorMessage .= '<br><br><button onclick="location.href=\'/db/create\';">Создать базу данных</button>';
     }
 $errorMessage .= '</div>';
 }

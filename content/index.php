@@ -10,7 +10,8 @@ $pageRequest = new Request();
 // Массив сегментов адреса страницы
 $pagePathArray = $pageRequest->url['pathArray'];
 // Имя вызываемой страницы (первый сегмент адреса)
-$pageName = $pagePathArray[0] ?? '';
+//$pageName = $pagePathArray[0] ?? '';
+$pageName = $pageRequest->url['pathArray'][0] ?? '';
 if ($pageName == '') {
     $pageName = 'main';
 }
@@ -29,6 +30,12 @@ $template = '';         // шаблон для вывода
 switch ($pageName) {
 
     //----------------------------------------
+    case 'request-info':            // Информация о запросе для теста
+        $contentData = $pageRequest;
+        $template = 'debug_page.php';
+        break;
+
+    //----------------------------------------
     case 'main':                    // Главная страница
         $contentData = MainPage::prepare();
         $template = 'main_page.php';
@@ -36,25 +43,9 @@ switch ($pageName) {
 
     //----------------------------------------
     case 'db':                      // Работа с базой данных
-        $contentData = ControllerDb::run($pageRequest);
-        $template = 'db_info.php';
-        break;
-
-    //----------------------------------------
-    case 'db_info':                 // Информация о базе данных
-        $contentData = Db::getDbInfo();
-        $template = 'db_info.php';
-        break;
-
-    //----------------------------------------
-    case 'db_create':                 // Создание базы данных по умолчанию
-        $contentData = Db::dbCreate();
-        $template = 'result_info.php';
-        break;
-
-    //----------------------------------------
-    case 'example.html':            // образец страницы (временно)
-        //include $_SERVER['DOCUMENT_ROOT'] . '/content/example.html';
+        list($contentData, $template) = ControllerDb::run($pageRequest);
+        //$contentData = ControllerDb::run($pageRequest);
+        //$template = 'db_info.php';
         break;
 
     //----------------------------------------

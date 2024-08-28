@@ -24,27 +24,29 @@ const DB_CONF = [
     'list_measure_units' => [
         'title' => 'Единицы измерения',
         'fields' => [
-            'name'        => ['title' => 'Наименование' , 'type' => 'text'],
+            'code'  => ['title' => 'Код'          , 'type' => 'text'],
+            'name'  => ['title' => 'Наименование' , 'type' => 'text'],
         ],
     ],
     'list_flaps_count' => [
         'title' => 'Количество створок',
         'fields' => [
-            //'name'        => ['title' => 'Наименование' , 'type' => 'int'],
-            'name'        => ['title' => 'Наименование' , 'type' => 'text'],
+            'code'  => ['title' => 'Код'          , 'type' => 'text'],
+            'name'  => ['title' => 'Наименование' , 'type' => 'text'],
         ],
     ],
     'list_locking_type' => [
         'title' => 'Типы запирания',
         'fields' => [
-            'name'        => ['title' => 'Наименование' , 'type' => 'text'],
+            'code'  => ['title' => 'Код'          , 'type' => 'text'],
+            'name'  => ['title' => 'Наименование' , 'type' => 'text'],
         ],
     ],
     'list_colors' => [
         'title' => 'Цвета',
         'fields' => [
-            'name'        => ['title' => 'Наименование' , 'type' => 'text'],
-            'description' => ['title' => 'Описание'     , 'type' => 'text'],
+            'code'  => ['title' => 'Код'          , 'type' => 'text'],
+            'name'  => ['title' => 'Наименование' , 'type' => 'text'],
         ],
     ],
 ];

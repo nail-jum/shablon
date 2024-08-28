@@ -39,6 +39,10 @@ class Db
 
     static function query($sql = '', $showError = true)
     {
+        if (strlen($sql) == 0) {
+            self::$errorMessage[] = 'Пустая строка запроса к базе данных.';
+            return false;
+        }
         if (!self::connect()) {
             self::$errorMessage[] = 'Ошибка подключения к базе данных.';
             return false;
@@ -74,13 +78,6 @@ class Db
         return $result;
     }
 
-    /**
-     * Check if a table exists in the current database.
-     *
-     * @param PDO $pdo PDO instance connected to a database.
-     * @param string $table Table to search for.
-     * @return bool TRUE if table exists, FALSE if no table found.
-     */
     static function tableExists($table)
     {
         $result = self::query("SELECT 1 FROM {$table} LIMIT 1", false);
@@ -106,16 +103,27 @@ class Db
     {
         return [
             'status' => 'warning',
-            //'connected' => self::$connected,
-            //'filename' => self::SQLITE_FILE,
             'message' => self::$errorMessage,
         ];
     }
 
-    static function dbInfo()
+    // Описание конфигурации базы данных
+    static function dbConfig($filter = '')
     {
+        return DB_CONF;
+    }
+
+    // Физическая (реальная) структура базы данных
+    static function dbStructure($filter = '')
+    {
+        // sql-запрос
+        $sql = "SELECT * FROM \"sqlite_master\" WHERE type='table'";
+        // дополнительный фильтр
+        if (strlen($filter) > 0) {
+            $sql .= ' AND ' . $filter;
+        }
         // схема базы данных
-        $baseSchema = self::query("SELECT * FROM `sqlite_master` where type='table'");
+        $baseSchema = self::query($sql);
 
         if ($baseSchema == false) {
             self::$errorMessage[] = 'Ошибка получения схемы базы.';
@@ -259,18 +267,46 @@ class Db
     // - - - - - - - - - - - - - - - - - - - - - - - -
     // Вывод информации о структуре базы и ее таблиц
     // - - - - - - - - - - - - - - - - - - - - - - - -
-    static function getDbInfo()
+    static function getDbStructure($filter = '')
     {
-        $result = Db::dbInfo();
+        $dbConfig = self::dbConfig();
+        $result = self::dbStructure($filter);
         if ($result === false) {
-            return Db::errorInfo();
+            return self::errorInfo();
         } elseif (count($result) == 0) {
             self::$errorMessage[] = 'Пустой список таблиц';
-            return Db::warningInfo();
+            return self::warningInfo();
         } else {
             return [
                 'status' => 'ok',
                 'data' => $result,
+            ];
+        }
+    }
+
+    // - - - - - - - - - - - - - - - - - - - - - - - -
+    // Вывод информации о структуре базы и ее таблиц
+    // совмещенной с описанием конфигурации
+    // - - - - - - - - - - - - - - - - - - - - - - - -
+    static function getDbStructureInfo($filter = '')
+    {
+        $dbConfig = self::dbConfig();           // описание конфигурации
+        $result = self::dbStructure($filter);   // структура базы данных
+        if ($result === false) {
+            return self::errorInfo();
+        } elseif (count($result) == 0) {
+            self::$errorMessage[] = 'Пустой список таблиц';
+            return self::warningInfo();
+        } else {
+            $structure = [];
+            foreach ($result as $tableName => $tableStructure) {
+                $title = $dbConfig[$tableName]['title'] ?? '';
+                $structure[$tableName] = $tableStructure;
+                $structure[$tableName]['title'] = $title;   // добавление имени таблицы
+            }
+            return [
+                'status' => 'ok',
+                'data' => $structure,
             ];
         }
     }
