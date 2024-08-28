@@ -1,0 +1,132 @@
+* {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 14px;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+}
+
+div.page-top {
+    height: 100px;
+    min-height: 100px;
+    background-color: #40a0ff;
+}
+
+.page-content {
+    flex: 1 0 auto;
+}
+
+div.page-footer {
+    flex-shrink: 0;
+    min-height: 20px;
+    background-color: #40a0ff;
+}
+
+div.error {
+    width: 800px;
+    margin: 0 auto 8px;
+    padding: 8px;
+    border: solid 1px red;
+    text-align: center;
+}
+
+div.warning {
+    width: 800px;
+    margin: 0 auto 8px;
+    padding: 8px;
+    border: solid 1px blue;
+    text-align: center;
+}
+
+h1 {
+    font-size: 16px;
+    margin: 12px 0 16px;
+    text-align: center;
+    color: #082080;
+}
+
+h2 {
+    font-size: 14px;
+    margin: 2px 0 8px;;
+    text-align: center;
+    color: #082080;
+}
+
+.c {
+    text-align: center;
+}
+
+.l {
+    text-align: left;
+}
+
+.r {
+    text-align: right;
+}
+
+.vtop {
+    vertical-align: top;
+}
+
+.vbottom {
+    vertical-align: bottom;
+}
+
+/* Стили для страницы редактирования таблицы */
+table.table-edit {
+    border: 1px solid #808080;
+    border-collapse: collapse;
+    margin: 0 auto;
+    min-width: 600px;
+    font-size: 14px;
+}
+
+table.table-edit th {
+    border: 1px solid #808080;
+    padding: 2px 6px;
+    font-size: 13px;
+    color: #082080;
+}
+
+table.table-edit td {
+    border: 1px solid #808080;
+    padding: 2px 6px;
+    color: ;
+}
+
+table.table-edit td.edit-icon {
+    width: 10px;
+}
+
+/* Стили для страницы редактирования записи */
+div.row-edit {
+    width: 800px;
+    margin: 0 auto;
+    border: dotted 1px #082080;
+}
+
+div.row-edit table {
+    margin: 0 auto;
+}
+
+/* Прочие стили */
+table.test {
+    border: 3px solid blue;
+    border-collapse: collapse;
+    margin: 0 auto;
+    min-width: 600px;
+    font-size: 14px;
+}
+
+table.test td {
+    border: 1px solid red;
+    padding: 2px 6px;
+}

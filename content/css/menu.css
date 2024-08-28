@@ -1,0 +1,24 @@
+div.main-menu {
+    display: flex;
+    /*justify-content: space-around;*/
+    justify-content: left;
+    padding: 0 8px;
+    border-bottom: solid 1px #40a0ff;
+}
+.main-menu > div {
+    display: inline-block;
+    /*width: 100px;*/
+    margin: 0 8px;
+    padding: 4px;
+    /*border: dotted 1px grey;*/
+    text-align: center;
+}
+.main-menu a {
+    text-decoration: none;
+    color: #082080;
+}
+
+.menu-active-item {
+    font-weight: bold;
+    color: #082080;
+}

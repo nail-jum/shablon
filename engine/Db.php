@@ -1,0 +1,349 @@
+<?php
+
+// https://prowebmastering.ru/category/sqlite
+
+//define('SQLITE_FILE', 'db/test.db');
+include_once ($_SERVER['DOCUMENT_ROOT'] . '/config/db_config.php');
+
+class Db
+{
+    const SQLITE_FILE = 'db/test.db';
+    static $pdo;                    // объект PDO
+
+    // свойства для вывода сообщений об ошибке
+    static $connected = false;      // признак подключения
+    static $errorMessage = [];      // сообщение об ошибке
+
+
+    static function connect($new = false)
+    {
+        $dbFile = $_SERVER['DOCUMENT_ROOT'] . '/' . self::SQLITE_FILE;
+        // файл не найден и нет флага на создание нового
+        if (!file_exists($dbFile) && !$new) {
+            self::$errorMessage[] = 'Файл базы данных не найден.';
+            return false;
+        }
+        // открытие существующей или создание новой базы
+        if (self::$pdo == null) {
+            try {
+                self::$pdo = new \PDO("sqlite:" . $dbFile);
+            } catch (PDOException $e) {
+                self::$errorMessage[] = 'Ошибка создания базы данных.';
+                return false;
+            }
+        }
+        //self::$fileExists = true;
+        self::$connected = true;
+        return true;
+    }
+
+    static function query($sql = '', $showError = true)
+    {
+        if (!self::connect()) {
+            self::$errorMessage[] = 'Ошибка подключения к базе данных.';
+            return false;
+        }
+        try {
+            $result = self::$pdo->query($sql);
+        } catch (Exception $e) {
+            if ($showError) {
+                self::$errorMessage[] = 'Ошибка выполнения запроса: ';
+                self::$errorMessage[] = $e->getMessage();
+            }
+            return false;
+        }
+        if ($result == false) {
+            if ($showError) {
+                self::$errorMessage[] = 'Ошибка выполнения запроса: ';
+            }
+            return false;
+        }
+        return $result;
+    }
+
+    static function exec($sql = '')
+    {
+        self::connect();
+        try {
+            $result = self::$pdo->exec($sql);
+        } catch (Throwable $e) {
+            self::$errorMessage[] = 'Ошибка выполнения запроса: ';
+            self::$errorMessage[] = $e->getMessage();
+            $result = false;
+        }
+        return $result;
+    }
+
+    /**
+     * Check if a table exists in the current database.
+     *
+     * @param PDO $pdo PDO instance connected to a database.
+     * @param string $table Table to search for.
+     * @return bool TRUE if table exists, FALSE if no table found.
+     */
+    static function tableExists($table)
+    {
+        $result = self::query("SELECT 1 FROM {$table} LIMIT 1", false);
+        if ($result == false) {
+            self::$errorMessage[] = "Результат проверки: таблица $table не существует";
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    static function errorInfo()
+    {
+        return [
+            'status' => 'error',
+            'connected' => self::$connected,
+            'filename' => self::SQLITE_FILE,
+            'message' => self::$errorMessage,
+        ];
+    }
+
+    static function warningInfo()
+    {
+        return [
+            'status' => 'warning',
+            //'connected' => self::$connected,
+            //'filename' => self::SQLITE_FILE,
+            'message' => self::$errorMessage,
+        ];
+    }
+
+    static function dbInfo()
+    {
+        // схема базы данных
+        $baseSchema = self::query("SELECT * FROM `sqlite_master` where type='table'");
+
+        if ($baseSchema == false) {
+            self::$errorMessage[] = 'Ошибка получения схемы базы.';
+            return false;
+        } else {
+            //$baseInfo = $baseSchema->fetchAll(PDO::FETCH_ASSOC);
+            $baseInfo = [];
+            while ($baseRow = $baseSchema->fetch(PDO::FETCH_ASSOC)) {
+                $tableName = $baseRow['name'];
+                // схема таблицы
+                $tableSchema = self::query("pragma table_info('$tableName');");
+                //$tableInfo = $tableSchema->fetchAll(PDO::FETCH_ASSOC);
+                $tableInfo = [];
+                while ($row = $tableSchema->fetch(PDO::FETCH_ASSOC)) {
+                    $tableInfo[$row['name']] = $row;
+                }
+                $baseInfo[$tableName] = [
+                    'name' => $tableName,
+                    'sql' => $baseRow['sql'],
+                    'fields' => $tableInfo,
+                ];
+            }
+            if (count($baseInfo) == 0) {
+                $result = ['status' => 'Таблицы не обнаружены', 'info' => self::$pdo->errorInfo()];
+            }
+        }
+        return $baseInfo;
+    }
+
+    static function dbCreate()
+    {
+        // Создание базы данных
+        self::connect(true);
+        if (self::$connected == false) {
+            self::$errorMessage[] = 'Ошибка создания базы данных';
+            return false;
+        }
+        // Создание/добавление таблиц
+        foreach (DB_CONF as $tableName => $tableInfo) {
+            if (!self::tableExists($tableName)) {
+                $sqlArray = [];
+                foreach ($tableInfo['fields'] as $fieldName => $field) {
+                    $notNull = (bool) ($field['notnull'] ?? false);
+                    $defaulValue = $field['default'] ?? false;
+                    $sqlArray[] =
+                        "\"{$fieldName}\" {$field['type']}"
+                        . ($notNull ? "  NOT NULL" : "")
+                        . ($defaulValue ? " DEFAULT '$defaulValue'" : '')
+                        ;
+                }
+                $sql = "CREATE TABLE \"$tableName\" (\"id\" integer PRIMARY KEY," . implode(',', $sqlArray) . ")";
+                self::exec($sql);
+            }
+        }
+        // Заполнение таблиц данными по умолчанию
+        foreach (DB_DEFAULT_DATA as $tableName => $defaultData) {
+            self::dbMultiInsert($tableName, $defaultData['fields'], $defaultData['data']);
+        }
+    }
+
+    // - - - - - - - - - - - - - - - - - - - - - - - -
+    // Вставка данных в таблицу одной записи
+    // - - - - - - - - - - - - - - - - - - - - - - - -
+    static function dbInsert($tableName, $fields, $values)
+    {
+        // имена переменных для подстановки в запрос
+        $valNames = [];
+        foreach ($fields as $field) {
+            $valNames[] = ':_' . $field;
+        }
+        $sql = "INSERT INTO \"$tableName\"(\"" . implode('","', $fields) . "\") VALUES(" . implode(',', $valNames) . ');';
+        $request = self::$pdo->prepare($sql);
+
+        $data = [];
+        for ($ii = 0; $ii < count($fields); $ii++) {
+            $data[$valNames[$ii]] = $values[$ii];
+        }
+        $result = $request->execute($data);
+        if ($result == false) {
+            return Db::errorInfo();
+        }
+        return [
+            'status' => 'ok',
+            'data' => [
+                'sql' => $sql,
+                'lastInsertId' => self::$pdo->lastInsertId(),
+            ],
+        ];
+    }
+
+    // - - - - - - - - - - - - - - - - - - - - - - - -
+    // Вставка в таблицу массива записей
+    // - - - - - - - - - - - - - - - - - - - - - - - -
+    static function dbMultiInsert($tableName, $fields, $valueArray)
+    {
+        // имена переменных для подстановки в запрос
+        $valNames = [];
+        foreach ($fields as $field) {
+            $valNames[] = ':_' . $field;
+        }
+        $sql = "INSERT INTO \"$tableName\"(\"" . implode('","', $fields) . "\") VALUES(" . implode(',', $valNames) . ');';
+        $request = self::$pdo->prepare($sql);
+
+        foreach ($valueArray as $row) {
+            $data = [];
+            for ($ii = 0; $ii < count($fields); $ii++) {
+                $data[$valNames[$ii]] = $row[$ii];
+            }
+            $result = $request->execute($data);
+            if ($result == false) {
+                return Db::errorInfo();
+            }
+        }
+        return [
+            'status' => 'ok',
+            'data' => [
+                'sql' => $sql,
+                'lastInsertId' => self::$pdo->lastInsertId(),
+            ],
+        ];
+    }
+
+    // - - - - - - - - - - - - - - - - - - - - - - - -
+    // Параметры столбцов для вывода данных на экран
+    // - - - - - - - - - - - - - - - - - - - - - - - -
+    static function tableColumnsInfo($tableName)
+    {
+        $columnsInfo = [];
+        $tableInfo = DB_CONF[$tableName];
+        foreach ($tableInfo['fields'] as $fieldName => $fieldInfo) {
+            $columnsInfo[$fieldName] = [
+                'name'  => $fieldName,                  // имя поля
+                'title' => $fieldInfo['title'],         // шапка столбца
+                'type'  => $fieldInfo['type'],          // тип данных
+                'class' => $fieldInfo['class'] ?? 'c',  // класс (выравнивание)
+            ];
+        }
+        return $columnsInfo;
+    }
+
+    // - - - - - - - - - - - - - - - - - - - - - - - -
+    // Вывод информации о структуре базы и ее таблиц
+    // - - - - - - - - - - - - - - - - - - - - - - - -
+    static function getDbInfo()
+    {
+        $result = Db::dbInfo();
+        if ($result === false) {
+            return Db::errorInfo();
+        } elseif (count($result) == 0) {
+            self::$errorMessage[] = 'Пустой список таблиц';
+            return Db::warningInfo();
+        } else {
+            return [
+                'status' => 'ok',
+                'data' => $result,
+            ];
+        }
+    }
+
+    // - - - - - - - - - - - - - - - - - - - - - - - -
+    // Вывод данных таблицы
+    // - - - - - - - - - - - - - - - - - - - - - - - -
+    static function getTableData($tableName, $start = 0, $count = false)
+    {
+        if (strlen($tableName) == 0) {
+            self::$errorMessage[] = "Не указано имя таблицы.";
+            return Db::errorInfo();
+        }
+        if (!self::tableExists($tableName)) {
+            //self::$errorMessage[] = "Таблица $tableName в базе данных не найдена.";
+            return Db::errorInfo();
+        }
+
+        // Параметры столбцов таблицы для вывода на экран
+        $columnsInfo = self::tableColumnsInfo($tableName);
+        // Данные таблицы
+        $request = self::query("SELECT * FROM `$tableName`");
+        $data = [];
+        while ($row = $request->fetch(PDO::FETCH_ASSOC)) {
+            $data[$row['id']] = $row;
+        }
+
+        return [
+            'status' => 'ok',
+            'data' => [
+                'columns' => $columnsInfo,
+                'data' => $data,
+            ],
+        ];
+    }
+
+    // - - - - - - - - - - - - - - - - - - - - - - - -
+    // Вывод данных записи
+    // - - - - - - - - - - - - - - - - - - - - - - - -
+    static function getRowData($tableName, $rowId = false)
+    {
+        if (strlen($tableName) == 0) {
+            self::$errorMessage[] = "Не указано имя таблицы.";
+            return Db::errorInfo();
+        }
+        if (!self::tableExists($tableName)) {
+            //self::$errorMessage[] = "Таблица $tableName в базе данных не найдена.";
+            return Db::errorInfo();
+        }
+
+        // Параметры столбцов таблицы для вывода на экран
+        $columnsInfo = self::tableColumnsInfo($tableName);
+        // Данные таблицы
+        if ($rowId != false) {
+            $request = self::query("SELECT * FROM `$tableName` WHERE `id`=$rowId");
+            $data = $request->fetch(PDO::FETCH_ASSOC);
+        } else {
+            $data = [];
+        }
+
+        return [
+            'status' => 'ok',
+            'data' => [
+                'tableName' => $tableName,
+                'rowId'     => $rowId,
+                'columns'   => $columnsInfo,
+                'data'      => $data,
+                //'columns' => $columnsInfo,
+                //'data' => $data,
+            ],
+        ];
+    }
+
+}
+
+
