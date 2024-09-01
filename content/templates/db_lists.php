@@ -31,7 +31,7 @@ include_once('templates/page_header.php');
     <tr><th>описание</th><th>таблица</th></tr>
 <?php foreach ($tables as $table) { ?>
     <tr>
-    <td class='vtop'><a href="/db/selectlists/<?= $table['name'] ?>"><?= $table['title'] ?></a></td>
+    <td class='vtop'><a href="/table/<?= $table['name'] ?>"><?= $table['title'] ?></a></td>
     <td class='vtop'><?= $table['name'] ?></td>
     </tr>
 <?php } ?>

@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Класс для работы с базой данных
+ */
+
 // https://prowebmastering.ru/category/sqlite
 
 //define('SQLITE_FILE', 'db/test.db');
@@ -261,7 +265,10 @@ class Db
                 'class' => $fieldInfo['class'] ?? 'c',  // класс (выравнивание)
             ];
         }
-        return $columnsInfo;
+        return [
+            'title' => $tableInfo['title'],
+            'fields' => $columnsInfo,
+        ];
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - -
@@ -337,7 +344,9 @@ class Db
         return [
             'status' => 'ok',
             'data' => [
-                'columns' => $columnsInfo,
+                'name' => $tableName,
+                'title' => $columnsInfo['title'],
+                'columns' => $columnsInfo['fields'],
                 'data' => $data,
             ],
         ];
@@ -346,34 +355,49 @@ class Db
     // - - - - - - - - - - - - - - - - - - - - - - - -
     // Вывод данных записи
     // - - - - - - - - - - - - - - - - - - - - - - - -
-    static function getRowData($tableName, $rowId = false)
+    static function rowData($tableName, $rowId = false)
     {
         if (strlen($tableName) == 0) {
-            self::$errorMessage[] = "Не указано имя таблицы.";
-            return Db::errorInfo();
+            self::$errorMessage[] = "rowData(): Не указано имя таблицы.";
+            return false;
         }
-        if (!self::tableExists($tableName)) {
-            //self::$errorMessage[] = "Таблица $tableName в базе данных не найдена.";
-            return Db::errorInfo();
+        if (self::tableExists($tableName) == false) {
+            self::$errorMessage[] = "rowData(): Таблица $tableName в базе данных не найдена.";
+            return false;
         }
+        if ($rowId == false) {
+            self::$errorMessage[] = "rowData(): Не указан rowId.";
+            return false;
+        }
+        $request = self::query("SELECT * FROM \"$tableName\" WHERE \"id\"=$rowId");
+        $data = $request->fetch(PDO::FETCH_ASSOC);
+        if ($data == false) {
+            self::$errorMessage[] = "rowData(): Ошибка выполнения запроса.";
+            return false;
+        }
+        return $data;
+    }
 
+    // - - - - - - - - - - - - - - - - - - - - - - - -
+    // Вывод данных записи
+    // - - - - - - - - - - - - - - - - - - - - - - - -
+    static function getRowData($tableName, $rowId = false)
+    {
+        // Данные таблицы
+        $rowData = self::rowData($tableName, $rowId);
+        if ($rowData == false) {
+            return Db::errorInfo();
+        }
         // Параметры столбцов таблицы для вывода на экран
         $columnsInfo = self::tableColumnsInfo($tableName);
-        // Данные таблицы
-        if ($rowId != false) {
-            $request = self::query("SELECT * FROM `$tableName` WHERE `id`=$rowId");
-            $data = $request->fetch(PDO::FETCH_ASSOC);
-        } else {
-            $data = [];
-        }
 
         return [
             'status' => 'ok',
             'data' => [
                 'tableName' => $tableName,
                 'rowId'     => $rowId,
-                'columns'   => $columnsInfo,
-                'data'      => $data,
+                'columns'   => $columnsInfo['fields'],
+                'data'      => $rowData,
                 //'columns' => $columnsInfo,
                 //'data' => $data,
             ],

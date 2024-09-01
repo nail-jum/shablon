@@ -49,6 +49,13 @@ switch ($pageName) {
         break;
 
     //----------------------------------------
+    case 'table':                      // Работа с базой данных
+        list($contentData, $template) = ControllerTable::run($pageRequest);
+        //$contentData = ControllerDb::run($pageRequest);
+        //$template = 'db_info.php';
+        break;
+
+    //----------------------------------------
     default:
         if (file_exists($_SERVER['DOCUMENT_ROOT'] . '/content/' . $pageName . '.php')) {
             // если найден одноименный php-файл

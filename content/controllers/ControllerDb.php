@@ -17,9 +17,9 @@ class ControllerDb
                 'info' => ["Неверный выбор обработчика для запроса $pagePathArray[0]"],
             ];
         }
-        $requestSegment_2 = $pagePathArray[1] ?? 'info';
+        $requestCategory = $pagePathArray[1] ?? 'info';
 
-        switch ($requestSegment_2) {
+        switch ($requestCategory) {
             //----------------------------------------
             case 'info':                        // Информация о базе данных
                 $contentData = Db::getDbStructure();
@@ -36,25 +36,6 @@ class ControllerDb
             case 'selectlists':                 // Список справочников
                 $filter = "\"name\" LIKE 'list%'";
                 $contentData = Db::getDbStructureInfo($filter);
-                /*
-                $dbConfig = Db::dbConfig();
-                $dbStructure = Db::getDbStructure($filter);
-                if ($dbStructure['status'] == 'ok') {
-                    $structure = [];
-                    foreach ($dbStructure['data'] as $tableName => $tableStructure) {
-                        $title = $dbConfig[$tableName]['title'];
-                        $structure[$tableName] = $tableStructure;
-                        $structure[$tableName]['title'] = $title;
-                    }
-                    $contentData = [
-                        'status' => 'ok',
-                        'data' => $structure,
-                    ];
-                } else {
-                    $contentData = $dbStructure;
-                }
-                */
-                //$template = 'db_info.php';
                 $template = 'db_lists.php';
                 break;
 

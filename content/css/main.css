@@ -15,9 +15,10 @@ body {
 }
 
 div.page-top {
-    height: 100px;
-    min-height: 100px;
-    background-color: #40a0ff;
+    display: flex;
+    height: 80px;
+    min-height: 80px;
+    background-color: #40a8ff;
 }
 
 .page-content {
@@ -27,7 +28,13 @@ div.page-top {
 div.page-footer {
     flex-shrink: 0;
     min-height: 20px;
-    background-color: #40a0ff;
+    background-color: #40a8ff;
+}
+
+div.page-logo img {
+    margin: 5px 20px 0;
+    max-width: 70px;
+    max-height: 70px;
 }
 
 div.error {
@@ -102,7 +109,7 @@ table.table-edit td {
     color: ;
 }
 
-table.table-edit td.edit-icon {
+td.w10 {
     width: 10px;
 }
 
