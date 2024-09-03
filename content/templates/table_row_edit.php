@@ -19,7 +19,8 @@ $refererPage = $_SERVER['HTTP_REFERER'] ?? '/';     // предыдущая ст
 
 // запрос данных таблицы
 $table = $contentData['data'] ?? [];        // данные таблицы
-$tableName  = $table['name'] ?? [];
+$tableName  = $table['name'] ?? [];         // имя таблицы
+$rowId      = $table['row-id'] ?? [];       // id записи
 $rowColumns = $table['columns'] ?? [];      // информация о полях таблицы
 $rowData    = $table['data'] ?? [];         // значения полей
 $action     = $table['action'] ?? [];       // текущее действие
@@ -44,7 +45,7 @@ include_once('templates/page_header.php');
 <h1>Таблица "<?= $table['title'] ?>"</h1>
 <?= $errorMessage ?>
 
-<form action="db_table_row_submit.php" method="post">
+<form action="/table/<?= $tableName ?>/<?= ($rowId ?? '') ?>" method="post">
     <div class="row-edit">
         <h2><?= $actionConf[$action]['title'] ?></h2>
         <table>
@@ -83,3 +84,5 @@ action = <?= $action ?>
 
 <?php echo print_r($table, true); ?>
 </pre>
+
+<?php include_once('templates/page_footer.php'); ?>

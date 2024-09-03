@@ -32,7 +32,7 @@ switch ($pageName) {
     //----------------------------------------
     case 'request-info':            // Информация о запросе для теста
         $contentData = $pageRequest;
-        $template = 'debug_page.php';
+        $template = 'page_debug.php';
         break;
 
     //----------------------------------------
@@ -49,10 +49,17 @@ switch ($pageName) {
         break;
 
     //----------------------------------------
-    case 'table':                      // Работа с базой данных
+    case 'table':                   // Работа с базой данных
         list($contentData, $template) = ControllerTable::run($pageRequest);
         //$contentData = ControllerDb::run($pageRequest);
         //$template = 'db_info.php';
+        break;
+
+    //----------------------------------------
+    case 'materials':               // Материалы
+        // вывод списка записей таблицы
+        $contentData = Db::getTableData('materials');
+        $template = 'table_edit.php';
         break;
 
     //----------------------------------------

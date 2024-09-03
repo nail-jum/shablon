@@ -6,8 +6,8 @@ $mainMenu = [
     ['title' => 'Материалы'             , 'link' => '/materials'],
     ['title' => 'Справочники'           , 'link' => '/db/selectlists'],
     ['title' => 'База данных'           , 'link' => '/db/info'],
-    ['title' => 'Редактирование данных' , 'link' => '/db/table_edit.php', 'second-menu' => 'tableMenu'],
-    ['title' => 'Request'               , 'link' => '/request-info'],
+    //['title' => 'Редактирование данных' , 'link' => '/db/table_edit.php', 'second-menu' => 'tableMenu'],
+    //['title' => 'Request'               , 'link' => '/request-info'],
 ];
 
 $tableMenu = [

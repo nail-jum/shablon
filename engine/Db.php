@@ -82,6 +82,31 @@ class Db
         return $result;
     }
 
+    static function preparedExec($sql = '', $data = [], $showError = true)
+    {
+        if (!self::connect()) {
+            self::$errorMessage[] = 'Ошибка подключения к базе данных.';
+            return false;
+        }
+        try {
+            $request = self::$pdo->prepare($sql);
+            $result = $request->execute($data);
+        } catch (Exception $e) {
+            if ($showError) {
+                self::$errorMessage[] = 'Ошибка выполнения запроса: ';
+                self::$errorMessage[] = $e->getMessage();
+            }
+            return false;
+        }
+        if ($result == false) {
+            if ($showError) {
+                self::$errorMessage[] = 'Ошибка выполнения запроса: ';
+            }
+            return false;
+        }
+        return $result;
+    }
+
     static function tableExists($table)
     {
         $result = self::query("SELECT 1 FROM {$table} LIMIT 1", false);
@@ -189,10 +214,69 @@ class Db
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - -
+    // Обновление данных записи таблицы
+    // - - - - - - - - - - - - - - - - - - - - - - - -
+    static function rowUpdate($tableName, $fieldValues, $rowId)
+    {
+        // строка подстановок для запроса
+        $placeholders = [];
+        $values =[];
+        foreach ($fieldValues as $field) {
+            $placeholders[] = "\"{$field['name']}\" = ?";
+            $values[] = $field['value'];
+        }
+        $sql = "UPDATE \"$tableName\" SET " . implode(',', $placeholders) . " WHERE \"id\" = {$rowId};";
+        // выполнение подготовленного запроса
+        $result = self::preparedExec($sql, $values);
+        if ($result == false) {
+            return Db::errorInfo();
+        }
+        return [
+            'status' => 'ok',
+            'data' => [
+                'sql' => $sql,
+                'lastInsertId' => self::$pdo->lastInsertId(),
+            ],
+        ];
+    }
+
+    // - - - - - - - - - - - - - - - - - - - - - - - -
     // Вставка данных в таблицу одной записи
     // - - - - - - - - - - - - - - - - - - - - - - - -
-    static function dbInsert($tableName, $fields, $values)
+    static function rowInsert($tableName, $fieldValues)
     {
+        // строка подстановок для запроса
+        //$placeholders = str_repeat('?,', count($fields) - 1) . '?';
+        $placeholders = [];
+        $fields =[];
+        $values =[];
+        foreach ($fieldValues as $field) {
+            $placeholders[] = '?';
+            $fields[] = $field['name'];
+            $values[] = $field['value'];
+        }
+        $sql = "INSERT INTO \"$tableName\"(\"" . implode('","', $fields) . "\") VALUES(" . implode(',', $placeholders) . ');';
+        // выполнение подготовленного запроса
+        $result = self::preparedExec($sql, $values);
+        if ($result == false) {
+            return Db::errorInfo();
+        }
+        return [
+            'status' => 'ok',
+            'data' => [
+                'sql' => $sql,
+                'lastInsertId' => self::$pdo->lastInsertId(),
+            ],
+        ];
+    }
+
+    // - - - - - - - - - - - - - - - - - - - - - - - -
+    // Вставка данных в таблицу одной записи
+    // - - - - - - - - - - - - - - - - - - - - - - - -
+    static function dbInsert_0($tableName, $fields, $values)
+    {
+        // строка подстановок для запроса
+        $placeholders = str_repeat('?,', count($fields) - 1) . '?';
         // имена переменных для подстановки в запрос
         $valNames = [];
         foreach ($fields as $field) {

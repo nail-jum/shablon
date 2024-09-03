@@ -11,9 +11,9 @@ const DB_CONF = [
     'materials' => [
         'title' => 'Материалы (сырье)',
         'fields' => [
-            'name'        => ['title' => 'Наименование' , 'type' => 'text'],
-            'unit'        => ['title' => 'Единица измерения' , 'type' => 'text'],
-            'description' => ['title' => 'Описание'     , 'type' => 'text', 'default' => 'test'],
+            'name'         => ['title' => 'Наименование' , 'type' => 'text'],
+            'measure_unit' => ['title' => 'Единица измерения' , 'type' => 'text'],
+            'description'  => ['title' => 'Описание'     , 'type' => 'text', 'default' => 'test'],
         ],
     ],
 
@@ -24,29 +24,29 @@ const DB_CONF = [
     'list_measure_units' => [
         'title' => 'Единицы измерения',
         'fields' => [
-            'code'  => ['title' => 'Код'          , 'type' => 'text'],
-            'name'  => ['title' => 'Наименование' , 'type' => 'text'],
+            'name'        => ['title' => 'Код'          , 'type' => 'text'],
+            'description' => ['title' => 'Наименование' , 'type' => 'text'],
         ],
     ],
     'list_flaps_count' => [
         'title' => 'Количество створок',
         'fields' => [
-            'code'  => ['title' => 'Код'          , 'type' => 'text'],
-            'name'  => ['title' => 'Наименование' , 'type' => 'text'],
+            'name'        => ['title' => 'Код'          , 'type' => 'text'],
+            'description' => ['title' => 'Наименование' , 'type' => 'text'],
         ],
     ],
     'list_locking_type' => [
         'title' => 'Типы запирания',
         'fields' => [
-            'code'  => ['title' => 'Код'          , 'type' => 'text'],
-            'name'  => ['title' => 'Наименование' , 'type' => 'text'],
+            'name'        => ['title' => 'Код'          , 'type' => 'text'],
+            'description' => ['title' => 'Наименование' , 'type' => 'text'],
         ],
     ],
     'list_colors' => [
         'title' => 'Цвета',
         'fields' => [
-            'code'  => ['title' => 'Код'          , 'type' => 'text'],
-            'name'  => ['title' => 'Наименование' , 'type' => 'text'],
+            'name'        => ['title' => 'Код'          , 'type' => 'text'],
+            'description' => ['title' => 'Наименование' , 'type' => 'text'],
         ],
     ],
 ];
@@ -63,7 +63,7 @@ const DB_DEFAULT_DATA = [
     ],
 
     'list_measure_units' => [
-        'fields' => ['code', 'name'],
+        'fields' => ['name', 'description'],
         'data' => [
             ['пог. м', 'погонный метр'],
             ['м2', 'квадратный метр'],
@@ -73,7 +73,7 @@ const DB_DEFAULT_DATA = [
     ],
 
     'list_flaps_count' => [
-        'fields' => ['code', 'name'],
+        'fields' => ['name', 'description'],
         'data' => [
             ['1', 'одностворчатый люк'],
             ['2', 'двустворчатый люк'],
@@ -81,7 +81,7 @@ const DB_DEFAULT_DATA = [
     ],
 
     'list_locking_type' => [
-        'fields' => ['code', 'name'],
+        'fields' => ['name', 'description'],
         'data' => [
             ['1', 'нажимные защёлки'],
             ['2', 'с трёхгранным замком'],

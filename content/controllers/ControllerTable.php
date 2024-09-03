@@ -26,37 +26,33 @@ class ControllerTable
             return [$contentData, $template];
         }
 
-        $action = $_GET['_action'] ?? '';
-        $user_key = $_GET['_user_key'] ?? '';
+        $action = $_GET['_action'] ?? $_POST['_action'] ?? '';
+        $userKey = $_GET['_user_key'] ?? $_POST['_user_key'] ?? '';
+        $refererPage = $_GET['_referer-page'] ?? $_POST['_referer-page'] ?? '';
 
         switch ($action) {
             //----------------------------------------
             case 'new':                         // Создание новой записи
-                $contentData = Table::new($tableName);
-                $template = 'table_row_edit.php';
-                break;
-
-            //----------------------------------------
             case 'edit':                        // Редактирование записи
-                $contentData = Table::edit($tableName, $rowId);
-                $template = 'table_row_edit.php';
-                break;
-
-            //----------------------------------------
             case 'copy':                        // Копирование записи
-                $contentData = Table::copy($tableName, $rowId);
+            case 'del':                         // Запрос на удаление записи
+                $contentData = Table::editPrepare($action, $tableName, $rowId);
                 $template = 'table_row_edit.php';
                 break;
 
             //----------------------------------------
-            case 'del':                         // Запрос на удаление записи
-                $contentData = Table::deletePrompt($tableName, $rowId);
-                $template = 'table_row_edit.php';
+            case 'add':                         // Добавление записи
+            case 'upd':                         // Обновление записи
+                $contentData = Table::editSubmit($action, $tableName, $rowId);
+                //$contentData = ['status' => 'ok', 'data' => $_POST,];
+                // Перенаправление на страницу результатов
+                header("Location: $refererPage");
+                //$template = 'debug_page.php';     // для тестирования
                 break;
 
             //----------------------------------------
             case 'delete':                      // Удаление записи
-                $contentData = Table::deletePrompt($tableName, $rowId);
+                //$contentData = Table::deletePrompt($tableName, $rowId);
                 $template = 'table_row_edit.php';
                 break;
 
@@ -65,6 +61,7 @@ class ControllerTable
                 // вывод списка записей таблицы
                 $contentData = Db::getTableData($tableName); // изменить (добавить фильтры и сортировку)
                 $template = 'table_edit.php';
+                //return [ ['status' => 'ok', 'data' => $_POST,], 'debug_page.php' ];
                 break;
         }
 

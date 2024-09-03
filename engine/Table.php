@@ -6,84 +6,92 @@
 
 class Table
 {
-    static function new($tableName)
+    static function editPrepare($action, $tableName, $rowId = false)
     {
-        // Параметры столбцов таблицы для вывода на экран
-        $columnsInfo = Db::tableColumnsInfo($tableName);
-        return [
-            'status' => 'ok',
-            'data' => [
-                'name' => $tableName,
-                'title' => $columnsInfo['title'],
-                'columns' => $columnsInfo['fields'],
-                'data' => [],
-                'action' => 'new',
-                'new-action' => 'add',
-            ],
+        //
+        $newAction = [
+            'new'  => 'add',
+            'edit' => 'upd',
+            'copy' => 'add',
+            'del'  => 'delete',
         ];
-    }
-
-    static function edit($tableName, $rowId)
-    {
         // Параметры столбцов таблицы для вывода на экран
         $columnsInfo = Db::tableColumnsInfo($tableName);
-        $rowData = Db::rowData($tableName, $rowId);
-        if ($rowData == false) {
-            return Db::errorInfo();
+        // Данные таблицы
+        if ($rowId != false) {
+            $rowData = Db::rowData($tableName, $rowId);
+            if ($rowData == false) {
+                return Db::errorInfo();
+            }
+        } else {
+            $rowData = [];
         }
         return [
             'status' => 'ok',
             'data' => [
                 'name' => $tableName,
+                'row-id' => $rowId,
                 'title' => $columnsInfo['title'],
                 'columns' => $columnsInfo['fields'],
                 'data' => $rowData,
-                'action' => 'edit',
-                'new-action' => 'save',
+                'action' => $action,
+                'new-action' => $newAction[$action],
             ],
         ];
     }
 
-    static function copy($tableName, $rowId)
+    static function editSubmit($action, $tableName, $rowId = false)
     {
-        // Параметры столбцов таблицы для вывода на экран
+        // Параметры столбцов таблицы
         $columnsInfo = Db::tableColumnsInfo($tableName);
-        $rowData = Db::rowData($tableName, $rowId);
-        if ($rowData == false) {
-            return Db::errorInfo();
+        $fields = $columnsInfo['fields'];
+
+        // Чтение значений полей из массива POST
+        //$fieldNames = [];               // массив имен полей
+        $fieldValues = [];              // массив значений
+        //$fieldUpdateValues = [];        // массив пар поле = значение
+        $placeholders = [];
+        foreach ($fields as $field) {
+            switch ($field['type']) {
+                case 'text':
+                    $field['value'] = $_POST[$field['name']] ?? '';
+                    break;
+                case 'integer':
+                    $field['value'] = (int)($_POST[$field['name']] ?? '');
+                    break;
+                default:
+                    $field['value'] = $_POST[$field['name']] ?? '';
+                    break;
+            }
+            //$fieldNames[] = $field['name'];
+            $fieldValues[] = $field;
+            //$fieldUpdateValues[] = "\"{$field['name']}\" = '{$field['value']}'";
+            $placeholders[] = '?';
         }
+
+        // формирование запроса к базе данных
+        $sql ='';
+        switch ($action) {
+            case 'add':
+                // новая запись
+                Db::rowInsert($tableName, $fieldValues);
+                break;
+            case 'upd':
+                // обновление записи
+                Db::rowUpdate($tableName, $fieldValues, $rowId);
+                break;
+            default:
+                break;
+        }
+
+
         return [
             'status' => 'ok',
             'data' => [
-                'name' => $tableName,
-                'title' => $columnsInfo['title'],
-                'columns' => $columnsInfo['fields'],
-                'data' => $rowData,
-                'action' => 'copy',
-                'new-action' => 'add',
+                'post' => $_POST,
+                'fields' => $fields,
+                'sql' => $sql,
             ],
         ];
     }
-
-    static function deletePrompt($tableName, $rowId)
-    {
-        // Параметры столбцов таблицы для вывода на экран
-        $columnsInfo = Db::tableColumnsInfo($tableName);
-        $rowData = Db::rowData($tableName, $rowId);
-        if ($rowData == false) {
-            return Db::errorInfo();
-        }
-        return [
-            'status' => 'ok',
-            'data' => [
-                'name' => $tableName,
-                'title' => $columnsInfo['title'],
-                'columns' => $columnsInfo['fields'],
-                'data' => $rowData,
-                'action' => 'del',
-                'new-action' => 'delete',
-            ],
-        ];
-    }
-
 }
