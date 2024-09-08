@@ -21,6 +21,7 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/content/templates/page_header.php';
 
     div.order-list>div {
         margin: 10px;
+        font-weight: bold;
     }
 
     div.order-content {
@@ -37,11 +38,21 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/content/templates/page_header.php';
 </style>
 
 <script>
+    function selectOrder(orderId) {
+        $(".order-content-list").hide();
+        $("#order_" + orderId).show();
+        //$(".order-list-link").css('font-weight', 'normal');
+        //$("#a_" + orderId).css('font-weight', 'bold');
+        $(".order-list-link").css('color', '#082080');
+        $("#a_" + orderId).css('color', 'red');
+    }
+
     $(document).ready(function() {
         $(".order-list-link").on("click", function() {
-            [temp, row_id] = this.id.split('_');
-            $(".order-content-list").hide();
-            $("#order_" + row_id).show();
+            [temp, rowId] = this.id.split('_');
+            selectOrder(rowId);
+            //$(".order-content-list").hide();
+            //$("#order_" + rowId).show();
             //alert(row_id);
         });
 
@@ -49,7 +60,6 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/content/templates/page_header.php';
         $(".order-content-list").first().show();
 
     });
-
 </script>
 
 <div class="orders">

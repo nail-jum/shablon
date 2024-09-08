@@ -6,14 +6,17 @@
 
 class ControllerDb
 {
-    static function run($pageRequest)
+    //static function run($pageRequest)
+    static function run()
     {
+        global $app;
         // Массив сегментов адреса страницы
-        $pagePathArray = $pageRequest->url['pathArray'];
+        //$pagePathArray = $pageRequest->url['pathArray'];
+        $pagePathArray = $app->url['pathArray'];
         if ($pagePathArray[0] != 'db') {
             return [
                 'status' => 'error',
-                'data' => $pageRequest->url['path'],
+                'data' => $app->url['path'],
                 'info' => ["Неверный выбор обработчика для запроса $pagePathArray[0]"],
             ];
         }
@@ -45,6 +48,8 @@ class ControllerDb
                 $template = '';                 // шаблон для вывода
         }
 
-        return [$contentData, $template];
+        //return [$contentData, $template];
+        $app->contentData = $contentData;
+        $app->template = $template;
     }
 }

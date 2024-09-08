@@ -44,14 +44,15 @@ switch ($pageName) {
 
     //----------------------------------------
     case 'main':                    // Главная страница
-        $contentData = MainPage::prepare();
-        $template = 'main_page.php';
+        //$contentData = MainPage::prepare();
+        MainPage::prepare();
+        //$template = 'main_page.php';
         break;
 
     //----------------------------------------
     case 'db':                      // Работа с базой данных
-        list($contentData, $template) = ControllerDb::run($pageRequest);
-        //$contentData = ControllerDb::run($pageRequest);
+        //list($contentData, $template) = ControllerDb::run($pageRequest);
+        ControllerDb::run();
         //$template = 'db_info.php';
         break;
 

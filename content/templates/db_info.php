@@ -1,6 +1,6 @@
 <?php
 
-$dbInfo = $contentData;
+$dbInfo = $app->contentData;
 
 $errorMessage = '';
 if ($dbInfo['status'] == 'error') {
