@@ -1,6 +1,7 @@
 <?php
 
 $errorMessage = '';
+/*
 if ($contentData['status'] == 'error') {
     $errorMessage .= '<div class="error"><h2>Ошибка</h2>' . implode('<br>', $contentData['message']);
     if ($contentData['connected'] == false) {
@@ -11,12 +12,14 @@ if ($contentData['status'] == 'error') {
 if ($contentData['status'] == 'warning') {
     $errorMessage .= '<div class="warning"><h2>Предупреждение</h2>' . implode('<br>', $contentData['message']) . '</div>';
 }
+*/
+//$table = $contentData['data'] ?? [];    // данные таблицы
+$table = $contentData ?? [];    // данные таблицы
 
-$table = $contentData['data'] ?? [];    // данные таблицы
-
-$tableName    = $table['name'] ?? [];
-$tableColumns = $table['columns'] ?? [];
-$tableData    = $table['data'] ?? [];
+$tableName    = $table->tableName ?? '';
+$tableTitle   = $table->tableTitle ?? '';
+$tableColumns = $table->fields ?? [];
+$tableData    = $table->rows ?? [];
 
 //$pageTitle = 'Редактирование таблицы ' . $tableName;
 include_once('templates/page_header.php');
@@ -50,7 +53,7 @@ include_once('templates/page_header.php');
     ?>
 </pre>
 
-<h1>Таблица "<?= $table['title'] ?>"</h1>
+<h1>Таблица "<?= $tableTitle ?>"</h1>
 
 <?= $errorMessage ?>
 

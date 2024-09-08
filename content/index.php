@@ -5,13 +5,20 @@
 session_start();
 require_once $_SERVER['DOCUMENT_ROOT'] . '/autoload.php';
 
-// Параметры полученного запроса
-$pageRequest = new Request();
+/**
+ * Инициализация приложения. Заполнение массивов:
+ * $app->user;       // информация о пользователе
+ * $app->url;        // информация о запрошенном адресе
+ * $app->script;     // информация о выполняемом скрипте
+ */
+
+$app = new Application;
+
 // Массив сегментов адреса страницы
-$pagePathArray = $pageRequest->url['pathArray'];
+$pagePathArray = $app->url['pathArray'];
 // Имя вызываемой страницы (первый сегмент адреса)
-//$pageName = $pagePathArray[0] ?? '';
-$pageName = $pageRequest->url['pathArray'][0] ?? '';
+$pageName = $pagePathArray[0] ?? '';
+//$pageName = $pageRequest->url['pathArray'][0] ?? '';
 if ($pageName == '') {
     $pageName = 'main';
 }
@@ -30,9 +37,9 @@ $template = '';         // шаблон для вывода
 switch ($pageName) {
 
     //----------------------------------------
-    case 'request-info':            // Информация о запросе для теста
-        $contentData = $pageRequest;
-        $template = 'page_debug.php';
+    case 'app-info':            // Информация о запросе для теста
+        //$app->contentData = $pageRequest;
+        $app->template = 'app_debug.php';
         break;
 
     //----------------------------------------
@@ -63,6 +70,19 @@ switch ($pageName) {
         break;
 
     //----------------------------------------
+    case 'selectlists':             // Список справочников
+        $pathSegment_2 = $pagePathArray[1] ?? '';
+        if (strlen($pathSegment_2) == 0) {
+            $filter = "\"name\" LIKE 'list%'";
+            $contentData = Db::getDbStructureInfo($filter);
+            $template = 'selectlists.php';
+            break;
+        } else {
+
+        }
+        break;
+
+    //----------------------------------------
     default:
         if (file_exists($_SERVER['DOCUMENT_ROOT'] . '/content/' . $pageName . '.php')) {
             // если найден одноименный php-файл
@@ -73,11 +93,12 @@ switch ($pageName) {
 
 // Обработка результатов, полученных от контроллера
 //$content = $data;
-
-if (strlen($template) == 0) {
+/*
+if (strlen($app->template) == 0) {
     // не указан шаблон для вывода
-    $template = 'page_not_exist.php';
+    $app->template = 'page_not_exist.php';
 }
-
+*/
 // Вывод результатов
-include_once ($_SERVER['DOCUMENT_ROOT'] . "/content/templates/{$template}");
+//include_once ($_SERVER['DOCUMENT_ROOT'] . "/content/templates/{$app->template}");
+include_once $app->templatePath($app);

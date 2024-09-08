@@ -14,29 +14,55 @@ body {
     padding: 0;
 }
 
-div.page-top {
+a {
+    cursor: pointer;
+    text-decoration: none;
+}
+
+/* Блок шапки страницы */
+header.common {
     display: flex;
+    justify-content: space-between;
     height: 80px;
     min-height: 80px;
     background-color: #40a8ff;
 }
 
-.page-content {
-    flex: 1 0 auto;
+div.header-logo {
+    width: 120px;
 }
 
-div.page-footer {
-    flex-shrink: 0;
-    min-height: 20px;
-    background-color: #40a8ff;
-}
-
-div.page-logo img {
+div.header-logo img {
     margin: 5px 20px 0;
     max-width: 70px;
     max-height: 70px;
 }
 
+div.header-title {
+    min-width: 120px;
+}
+
+div.header-info {
+    width: 120px;
+    padding: 20px 20px;
+    /*text-align: right;*/
+    text-align: center;
+}
+
+/* Блок основного содержимого */
+main {
+    flex: 1 0 auto;
+}
+
+/* Блок подвала страницы */
+footer {
+    flex-shrink: 0;
+    min-height: 20px;
+    padding: 0 20px;
+    background-color: #40a8ff;
+}
+
+/* Блоки сообщений об ошибках */
 div.error {
     width: 800px;
     margin: 0 auto 8px;
@@ -53,6 +79,7 @@ div.warning {
     text-align: center;
 }
 
+/* Заголовки */
 h1 {
     font-size: 16px;
     margin: 12px 0 16px;

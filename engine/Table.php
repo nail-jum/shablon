@@ -3,10 +3,59 @@
 /**
  * Класс для работы с таблицами базы данных
  */
+include_once ($_SERVER['DOCUMENT_ROOT'] . '/config/db_config.php');
 
 class Table
 {
-    static function editPrepare($action, $tableName, $rowId = false)
+    public $tableName = false;      // имя таблицы
+    public $tableTitle = false;     // Описание таблицы
+    public $fields = [];            // поля
+    public $primaryKey = false;     // первичный ключ
+    public $rows = [];              // набор записей
+    public $rowId = false;          // id записи
+    public $rowData = [];           // данные записи
+    public $action = '';            //
+    public $newAction = '';         //
+
+    public function __construct($tableName)
+    {
+        $this->tableName = $tableName;
+        $tableInfo = DB_CONF[$tableName];
+        foreach ($tableInfo['fields'] as $fieldName => $fieldInfo) {
+            $this->fields[$fieldName] = [
+                'name'  => $fieldName,                  // имя поля
+                'title' => $fieldInfo['title'],         // шапка столбца
+                'type'  => $fieldInfo['type'],          // тип данных
+                'class' => $fieldInfo['class'] ?? 'c',  // класс (выравнивание)
+            ];
+        }
+        $this->tableTitle = $tableInfo['title'];
+        $this->primaryKey = $tableInfo['primary_key'];
+    }
+
+    public function getRows($start = 0, $count = false)
+    {
+        // Данные таблицы
+        $sql = "SELECT * FROM \"{$this->tableName}\"";
+        $result = Db::query($sql);
+        if ($result != false) {
+            if ($this->primaryKey != false) {
+                $data = [];
+                while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+                    $data[$row[$this->primaryKey]] = $row;
+                }
+            } else {
+                $data = $result->fetchAll(PDO::FETCH_ASSOC);
+            }
+            $this->rows = $data;
+            //return $data;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function editPrepare($action, $rowId = false)
     {
         //
         $newAction = [
@@ -15,29 +64,18 @@ class Table
             'copy' => 'add',
             'del'  => 'delete',
         ];
-        // Параметры столбцов таблицы для вывода на экран
-        $columnsInfo = Db::tableColumnsInfo($tableName);
+        $this->action = $action;
+        $this->newAction = $newAction[$action];
         // Данные таблицы
         if ($rowId != false) {
-            $rowData = Db::rowData($tableName, $rowId);
+            $this->rowId = $rowId;
+            $rowData = Db::rowData($this->tableName, $rowId);
             if ($rowData == false) {
-                return Db::errorInfo();
+                return false;
             }
-        } else {
-            $rowData = [];
+            $this->rowData = $rowData;
         }
-        return [
-            'status' => 'ok',
-            'data' => [
-                'name' => $tableName,
-                'row-id' => $rowId,
-                'title' => $columnsInfo['title'],
-                'columns' => $columnsInfo['fields'],
-                'data' => $rowData,
-                'action' => $action,
-                'new-action' => $newAction[$action],
-            ],
-        ];
+        return true;
     }
 
     static function editSubmit($action, $tableName, $rowId = false)

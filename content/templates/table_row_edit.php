@@ -1,13 +1,14 @@
 <?php
 
 $errorMessage = '';
+/*
 if ($contentData['status'] == 'error') {
     $errorMessage .= '<div class="error"><h2>Ошибка</h2>' . implode('<br>', $contentData['message']) . '</div>';
 }
 if ($contentData['status'] == 'warning') {
     $errorMessage .= '<div class="warning"><h2>Предупреждение</h2>' . implode('<br>', $contentData['message']) . '</div>';
 }
-
+*/
 $actionConf = [
     'new'  => ['title' => 'новая запись', 'submit-action' => 'add'],
     'edit' => ['title' => 'редактирование записи', 'submit-action' => 'upd'],
@@ -18,13 +19,22 @@ $actionConf = [
 $refererPage = $_SERVER['HTTP_REFERER'] ?? '/';     // предыдущая страница
 
 // запрос данных таблицы
-$table = $contentData['data'] ?? [];        // данные таблицы
-$tableName  = $table['name'] ?? [];         // имя таблицы
-$rowId      = $table['row-id'] ?? [];       // id записи
-$rowColumns = $table['columns'] ?? [];      // информация о полях таблицы
-$rowData    = $table['data'] ?? [];         // значения полей
-$action     = $table['action'] ?? [];       // текущее действие
-$newAction  = $table['new-action'] ?? [];   // завершающее действие
+$table = $contentData ?? [];        // данные таблицы
+$tableName    = $table->tableName ?? '';
+$tableTitle   = $table->tableTitle ?? '';
+$tableColumns = $table->fields ?? [];
+$tableData    = $table->rows ?? [];
+$rowId        = $table->rowId ?? false;
+$rowData      = $table->rowData ?? [];
+$action       = $table->action ?? '';
+$newAction    = $table->newAction ?? '';
+
+//$tableName  = $table['name'] ?? [];         // имя таблицы
+//$rowId      = $table['row-id'] ?? [];       // id записи
+//$rowColumns = $table['columns'] ?? [];      // информация о полях таблицы
+//$rowData    = $table['data'] ?? [];         // значения полей
+//$action     = $table['action'] ?? [];       // текущее действие
+//$newAction  = $table['new-action'] ?? [];   // завершающее действие
 // доступность полей для редактирования
 if ($action == 'del') {
     $disabled = ' disabled';
@@ -42,14 +52,14 @@ include_once('templates/page_header.php');
     }
 </style>
 
-<h1>Таблица "<?= $table['title'] ?>"</h1>
+<h1>Таблица "<?= $tableTitle ?>"</h1>
 <?= $errorMessage ?>
 
 <form action="/table/<?= $tableName ?>/<?= ($rowId ?? '') ?>" method="post">
     <div class="row-edit">
         <h2><?= $actionConf[$action]['title'] ?></h2>
         <table>
-            <?php foreach ($rowColumns as $column) { ?>
+            <?php foreach ($tableColumns as $column) { ?>
                 <tr>
                     <td class="r">
                         <?= $column['title'] ?>:

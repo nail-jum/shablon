@@ -62,7 +62,6 @@ class Request
     // - - - - - - - - - - - - - - - - - - - -
     {
         $pos1 = mb_strpos($url, '?');
-        //if ($pos1 === false || $pos1 === (mb_strlen($url) - 1)) {
         if ($pos1 === false) {
             // параметры отсутствуют
             return [

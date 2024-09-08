@@ -18,7 +18,7 @@ class ControllerTable
             ];
         }
         $tableName = $pagePathArray[1] ?? false;
-        $rowId = $pagePathArray[2] ?? 0;
+        $rowId = $pagePathArray[2] ?? false;
 
         if ($tableName == false) {
             $contentData = Db::getDbStructure();
@@ -30,13 +30,16 @@ class ControllerTable
         $userKey = $_GET['_user_key'] ?? $_POST['_user_key'] ?? '';
         $refererPage = $_GET['_referer-page'] ?? $_POST['_referer-page'] ?? '';
 
+        $table = new Table($tableName);
         switch ($action) {
             //----------------------------------------
             case 'new':                         // Создание новой записи
             case 'edit':                        // Редактирование записи
             case 'copy':                        // Копирование записи
             case 'del':                         // Запрос на удаление записи
-                $contentData = Table::editPrepare($action, $tableName, $rowId);
+                //$contentData = Table::editPrepare($action, $tableName, $rowId);
+                $table->editPrepare($action, $rowId);
+                $contentData = $table;
                 $template = 'table_row_edit.php';
                 break;
 
@@ -59,7 +62,8 @@ class ControllerTable
             //----------------------------------------
             default:
                 // вывод списка записей таблицы
-                $contentData = Db::getTableData($tableName); // изменить (добавить фильтры и сортировку)
+                $table->getRows();          // изменить (добавить фильтры и сортировку)
+                $contentData = $table;
                 $template = 'table_edit.php';
                 //return [ ['status' => 'ok', 'data' => $_POST,], 'debug_page.php' ];
                 break;

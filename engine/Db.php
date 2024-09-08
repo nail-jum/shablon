@@ -6,7 +6,6 @@
 
 // https://prowebmastering.ru/category/sqlite
 
-//define('SQLITE_FILE', 'db/test.db');
 include_once ($_SERVER['DOCUMENT_ROOT'] . '/config/db_config.php');
 
 class Db
@@ -21,6 +20,9 @@ class Db
 
     static function connect($new = false)
     {
+        if (self::$connected == true) {
+            return true;
+        }
         $dbFile = $_SERVER['DOCUMENT_ROOT'] . '/' . self::SQLITE_FILE;
         // файл не найден и нет флага на создание нового
         if (!file_exists($dbFile) && !$new) {
@@ -36,7 +38,6 @@ class Db
                 return false;
             }
         }
-        //self::$fileExists = true;
         self::$connected = true;
         return true;
     }
@@ -192,20 +193,19 @@ class Db
         }
         // Создание/добавление таблиц
         foreach (DB_CONF as $tableName => $tableInfo) {
-            if (!self::tableExists($tableName)) {
-                $sqlArray = [];
-                foreach ($tableInfo['fields'] as $fieldName => $field) {
-                    $notNull = (bool) ($field['notnull'] ?? false);
-                    $defaulValue = $field['default'] ?? false;
-                    $sqlArray[] =
-                        "\"{$fieldName}\" {$field['type']}"
-                        . ($notNull ? "  NOT NULL" : "")
-                        . ($defaulValue ? " DEFAULT '$defaulValue'" : '')
-                        ;
-                }
-                $sql = "CREATE TABLE \"$tableName\" (\"id\" integer PRIMARY KEY," . implode(',', $sqlArray) . ")";
-                self::exec($sql);
+            $primaryKeyField = $tableInfo['primary_key'] ?? false;
+            $sqlArray = [];
+            foreach ($tableInfo['fields'] as $fieldName => $field) {
+                $notNull = (bool) ($field['notnull'] ?? false);
+                $defaulValue = $field['default'] ?? false;
+                $sqlArray[] =
+                    "\"{$fieldName}\" {$field['type']}"
+                    . ($notNull ? "  NOT NULL" : "")
+                    . (($fieldName == $primaryKeyField) ? ' PRIMARY KEY' : '')
+                    . ($defaulValue ? " DEFAULT '$defaulValue'" : '');
             }
+            $sql = "CREATE TABLE IF NOT EXISTS \"$tableName\" (" . implode(',', $sqlArray) . ")";
+            self::exec($sql);
         }
         // Заполнение таблиц данными по умолчанию
         foreach (DB_DEFAULT_DATA as $tableName => $defaultData) {

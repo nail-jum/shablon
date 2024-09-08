@@ -4,15 +4,21 @@ $mainMenu = [
     ['title' => 'Заказы'                , 'link' => '/orders'],
     ['title' => 'Спецификации'          , 'link' => '/specifications'],
     ['title' => 'Материалы'             , 'link' => '/materials'],
-    ['title' => 'Справочники'           , 'link' => '/db/selectlists'],
+    ['title' => 'Справочники'           , 'link' => '/selectlists', 'second-menu' => 'selectlistMenu'],
     ['title' => 'База данных'           , 'link' => '/db/info'],
-    //['title' => 'Редактирование данных' , 'link' => '/db/table_edit.php', 'second-menu' => 'tableMenu'],
-    //['title' => 'Request'               , 'link' => '/request-info'],
+    ['title' => 'App info'              , 'link' => '/app-info/test?d=456'],
 ];
 
 $tableMenu = [
     ['title' => 'Пользователи'      , 'link' => '/db_table_edit.php?table=users'],
     ['title' => 'Материалы'         , 'link' => '/db_table_edit.php?table=materials'],
+];
+
+$selectlistMenu = [
+    ['title' => 'Единицы измерения'     , 'link' => '/specifications/list_measure_units'],
+    ['title' => 'Количество створок'    , 'link' => '/specifications/list_flaps_count'],
+    ['title' => 'Типы запирания'        , 'link' => '/specifications/list_locking_type'],
+    ['title' => 'Цвета'                 , 'link' => '/specifications/list_colors'],
 ];
 
 // запрашиваемая страница с параметрами

@@ -1,8 +1,9 @@
-</div> <!-- page-content -->
-<div class="page-footer">
-
-</div>
+</main>
+<footer>
+    <i>Jum, <?= date('Y'); ?></i>
+</footer>
 </body>
+
 </html>
 
 <?php

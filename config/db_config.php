@@ -4,17 +4,21 @@ const DB_CONF = [
     'users' => [
         'title' => 'Пользователи',
         'fields' => [
-            'name'   => ['title' => 'Имя пользователя'  , 'type' => 'text', 'notnull' => 1],
-            'passwd' => ['title' => 'Пароль'            , 'type' => 'text'],
+            'user_id'   => ['title' => 'id'                , 'type' => 'integer'],
+            'name'      => ['title' => 'Имя пользователя'  , 'type' => 'text', 'notnull' => 1],
+            'passwd'    => ['title' => 'Пароль'            , 'type' => 'text'],
         ],
+        'primary_key' => 'user_id',
     ],
     'materials' => [
         'title' => 'Материалы (сырье)',
         'fields' => [
-            'name'         => ['title' => 'Наименование' , 'type' => 'text'],
+            'material_id'  => ['title' => 'id'                , 'type' => 'integer'],
+            'name'         => ['title' => 'Наименование'      , 'type' => 'text'],
             'measure_unit' => ['title' => 'Единица измерения' , 'type' => 'text'],
-            'description'  => ['title' => 'Описание'     , 'type' => 'text', 'default' => 'test'],
+            'description'  => ['title' => 'Описание'          , 'type' => 'text', 'default' => 'test'],
         ],
+        'primary_key' => 'material_id',
     ],
 
     // - - - - - - - - - - - - - - - -
@@ -24,30 +28,38 @@ const DB_CONF = [
     'list_measure_units' => [
         'title' => 'Единицы измерения',
         'fields' => [
+            'item_id'     => ['title' => 'id'           , 'type' => 'integer'],
             'name'        => ['title' => 'Код'          , 'type' => 'text'],
             'description' => ['title' => 'Наименование' , 'type' => 'text'],
         ],
+        'primary_key' => 'item_id',
     ],
     'list_flaps_count' => [
         'title' => 'Количество створок',
         'fields' => [
+            'item_id'     => ['title' => 'id'           , 'type' => 'integer'],
             'name'        => ['title' => 'Код'          , 'type' => 'text'],
             'description' => ['title' => 'Наименование' , 'type' => 'text'],
         ],
+        'primary_key' => 'item_id',
     ],
     'list_locking_type' => [
         'title' => 'Типы запирания',
         'fields' => [
+            'item_id'     => ['title' => 'id'           , 'type' => 'integer'],
             'name'        => ['title' => 'Код'          , 'type' => 'text'],
             'description' => ['title' => 'Наименование' , 'type' => 'text'],
         ],
+        'primary_key' => 'item_id',
     ],
     'list_colors' => [
         'title' => 'Цвета',
         'fields' => [
+            'item_id'     => ['title' => 'id'           , 'type' => 'integer'],
             'name'        => ['title' => 'Код'          , 'type' => 'text'],
             'description' => ['title' => 'Наименование' , 'type' => 'text'],
         ],
+        'primary_key' => 'item_id',
     ],
 ];
 

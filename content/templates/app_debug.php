@@ -8,7 +8,7 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/content/templates/page_header.php';
 <h1>Отладочная информация</h1>
 
 <pre>
-<?php print_r($contentData) ?>
+<?php print_r($app) ?>
 </pre>
 
 
