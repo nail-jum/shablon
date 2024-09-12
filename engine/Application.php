@@ -58,8 +58,11 @@ class Application
         $this->script['file']       = __FILE__;
     }
 
-    public function templatePath()
+    public function templatePath($template = '')
     {
+        if (strlen($template) > 0) {
+            $this->template = $template;
+        }
         if (strlen($this->template) == 0) {
             // не указан шаблон для вывода
             $this->template = 'page_not_exist.php';

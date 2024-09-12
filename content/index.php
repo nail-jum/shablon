@@ -44,16 +44,12 @@ switch ($pageName) {
 
     //----------------------------------------
     case 'main':                    // Главная страница
-        //$contentData = MainPage::prepare();
         MainPage::prepare();
-        //$template = 'main_page.php';
         break;
 
     //----------------------------------------
     case 'db':                      // Работа с базой данных
-        //list($contentData, $template) = ControllerDb::run($pageRequest);
         ControllerDb::run();
-        //$template = 'db_info.php';
         break;
 
     //----------------------------------------
@@ -102,4 +98,4 @@ if (strlen($app->template) == 0) {
 */
 // Вывод результатов
 //include_once ($_SERVER['DOCUMENT_ROOT'] . "/content/templates/{$app->template}");
-include_once $app->templatePath($app);
+include_once $app->templatePath($template);

@@ -15,10 +15,10 @@ $tableMenu = [
 ];
 
 $selectlistMenu = [
-    ['title' => 'Единицы измерения'     , 'link' => '/specifications/list_measure_units'],
-    ['title' => 'Количество створок'    , 'link' => '/specifications/list_flaps_count'],
-    ['title' => 'Типы запирания'        , 'link' => '/specifications/list_locking_type'],
-    ['title' => 'Цвета'                 , 'link' => '/specifications/list_colors'],
+    ['title' => 'Единицы измерения'     , 'link' => '/selectlists/list_measure_units'],
+    ['title' => 'Количество створок'    , 'link' => '/selectlists/list_flaps_count'],
+    ['title' => 'Типы запирания'        , 'link' => '/selectlists/list_locking_type'],
+    ['title' => 'Цвета'                 , 'link' => '/selectlists/list_colors'],
 ];
 
 // запрашиваемая страница с параметрами
