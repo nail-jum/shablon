@@ -6,12 +6,10 @@
 
 class ControllerDb
 {
-    //static function run($pageRequest)
     static function run()
     {
         global $app;
         // Массив сегментов адреса страницы
-        //$pagePathArray = $pageRequest->url['pathArray'];
         $pagePathArray = $app->url['pathArray'];
         if ($pagePathArray[0] != 'db') {
             return [

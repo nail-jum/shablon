@@ -18,7 +18,6 @@ $app = new Application;
 $pagePathArray = $app->url['pathArray'];
 // Имя вызываемой страницы (первый сегмент адреса)
 $pageName = $pagePathArray[0] ?? '';
-//$pageName = $pageRequest->url['pathArray'][0] ?? '';
 if ($pageName == '') {
     $pageName = 'main';
 }
@@ -53,6 +52,23 @@ switch ($pageName) {
         break;
 
     //----------------------------------------
+    case 'selectlists':             // Список справочников
+        /*
+        $pathSegment_2 = $pagePathArray[1] ?? '';
+        if (strlen($pathSegment_2) == 0) {
+            $filter = "\"name\" LIKE 'list%'";
+            $contentData = Db::getDbStructureInfo($filter);
+            $template = 'selectlists.php';
+            break;
+        } else {
+
+        }
+        */
+        ControllerSelectlist::run();
+        break;
+
+
+        //----------------------------------------
     case 'table':                   // Работа с базой данных
         list($contentData, $template) = ControllerTable::run($pageRequest);
         //$contentData = ControllerDb::run($pageRequest);
@@ -64,19 +80,6 @@ switch ($pageName) {
         // вывод списка записей таблицы
         $contentData = Db::getTableData('materials');
         $template = 'table_edit.php';
-        break;
-
-    //----------------------------------------
-    case 'selectlists':             // Список справочников
-        $pathSegment_2 = $pagePathArray[1] ?? '';
-        if (strlen($pathSegment_2) == 0) {
-            $filter = "\"name\" LIKE 'list%'";
-            $contentData = Db::getDbStructureInfo($filter);
-            $template = 'selectlists.php';
-            break;
-        } else {
-
-        }
         break;
 
     //----------------------------------------
@@ -98,4 +101,5 @@ if (strlen($app->template) == 0) {
 */
 // Вывод результатов
 //include_once ($_SERVER['DOCUMENT_ROOT'] . "/content/templates/{$app->template}");
+
 include_once $app->templatePath($template);
