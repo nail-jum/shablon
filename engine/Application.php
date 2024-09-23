@@ -21,6 +21,8 @@ class Application
         $this->user['agent']    = $_SERVER['HTTP_USER_AGENT'];
         // адрес страницы, с которой был направлен клиент
         $this->user['referer']  = $_SERVER['HTTP_REFERER'] ?? '';
+        // доступ пользователя к странице (по умолчанию доступа нет)
+        $this->user['access']  = false;
 
         $this->url['full']      = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         // протокол запроса (http, https)

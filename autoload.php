@@ -1,5 +1,7 @@
 <?php
 
+include_once $_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php';
+
 /**
  * Глобальные константы
  */
@@ -62,7 +64,6 @@ function interfaceLoader($interfaceName)
 spl_autoload_register('libraryLoader');
 spl_autoload_register('interfaceLoader');
 
-//include_once $_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php';
 // ---------------------------------------------------
 
 function scriptTimeOut() {

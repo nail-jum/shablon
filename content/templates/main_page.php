@@ -1,7 +1,9 @@
 <?php
 
 global $app;
-$orderList = $app->contentData['orderList'];
+$orderList      = $app->contentData['orderList']['data'];
+//$orderColumns   = $app->contentData['orderList']['columns'];
+//$primaryKey     = $app->contentData['orderList']['primary_key'];
 
 include_once $_SERVER['DOCUMENT_ROOT'] . '/content/templates/page_header.php';
 ?>
@@ -21,7 +23,7 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/content/templates/page_header.php';
 
     div.order-list>div {
         margin: 10px;
-        font-weight: bold;
+        /*font-weight: bold;*/
     }
 
     div.order-content {
@@ -41,8 +43,6 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/content/templates/page_header.php';
     function selectOrder(orderId) {
         $(".order-content-list").hide();
         $("#order_" + orderId).show();
-        //$(".order-list-link").css('font-weight', 'normal');
-        //$("#a_" + orderId).css('font-weight', 'bold');
         $(".order-list-link").css('color', '#082080');
         $("#a_" + orderId).css('color', 'red');
     }
@@ -51,9 +51,6 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/content/templates/page_header.php';
         $(".order-list-link").on("click", function() {
             [temp, rowId] = this.id.split('_');
             selectOrder(rowId);
-            //$(".order-content-list").hide();
-            //$("#order_" + rowId).show();
-            //alert(row_id);
         });
 
         $(".order-content-list").hide();
@@ -62,37 +59,33 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/content/templates/page_header.php';
     });
 </script>
 
-<div class="orders">
-    <div class="order-list">
-        <h2>Заказы</h2>
-        <?php foreach ($orderList as $orderId => $order) { ?>
-            <div>
-                <a href="#" class="order-list-link" id="a_<?= $orderId ?>">
-                    <?= $order['date'] ?>
-                    <?= $order['name'] ?>
-                </a>
-            </div>
-        <?php } ?>
-    </div>
-    <div class="order-content">
-        <h2>Состав заказа</h2>
-        <?php foreach ($orderList as $orderId => $order) { ?>
-            <div class="order-content-list" id="order_<?= $orderId ?>">
-                <?php foreach ($order['products'] as $product) { ?>
-                    <div>
-                        <a href="#" id="a_<?= $orderId ?>">
-                            <?= $product  ?>
-                        </a>
-                    </div>
-                <?php } ?>
-            </div>
-        <?php } ?>
-    </div>
+<br>
+<table class="orders">
+    <thead>
+        <tr>
+            <th>Наименование</th>
+            <th>Менеджер</th>
+            <th>Дата создания</th>
+            <th>Дата завершения планируемая</th>
+            <th>Примечание</th>
+        </tr>
+    </thead>
+    <?php foreach ($orderList['data'] as $orderId => $order) { ?>
+        <tr>
+            <td><?= $order['name'] ?></td>
+            <td><?= $order['manager'] ?></td>
+            <td><?= $order['date_create'] ?></td>
+            <td><?= $order['date_end_plan'] ?></td>
+            <td><?= $order['comment'] ?></td>
+        </tr>
+    <?php } ?>
+</table>
 
-</div>
-
+<pre>
+<?php //print_r($orderList);
+?>
+</pre>
 <?php
-//echo 'Hello<br>';
 //echo $contentData;
 ?>
 

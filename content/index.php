@@ -15,91 +15,23 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/autoload.php';
 $app = new Application;
 
 // Массив сегментов адреса страницы
-$pagePathArray = $app->url['pathArray'];
-// Имя вызываемой страницы (первый сегмент адреса)
-$pageName = $pagePathArray[0] ?? '';
-if ($pageName == '') {
-    $pageName = 'main';
-}
+$urlArray = $app->url['pathArray'];
 
-if ($pageName != 'user_logon') {
-    // Проверка авторизации пользователя
-    //require_once $_SERVER['DOCUMENT_ROOT'] . '/autorization.php';
-}
+// Первый сегмент запрашиваемого адреса
+//$urlFirstSegment = $app->url['pathArray'][0];
 
-// --------------------------------------------
-// Обработка полученного запроса
-// --------------------------------------------
-$contentData = [];      // результаты, полученных от контроллера
-$template = '';         // шаблон для вывода
-
-switch ($pageName) {
-
+//switch ($urlFirstSegment) {
+switch ($urlArray[0]) {
     //----------------------------------------
-    case 'app-info':            // Информация о запросе для теста
-        //$app->contentData = $pageRequest;
-        $app->template = 'app_debug.php';
+    case 'api':                 // Запросы API
+        $router = 'api.php';
         break;
 
     //----------------------------------------
-    case 'main':                    // Главная страница
-        MainPage::prepare();
-        break;
-
-    //----------------------------------------
-    case 'db':                      // Работа с базой данных
-        ControllerDb::run();
-        break;
-
-    //----------------------------------------
-    case 'selectlists':             // Список справочников
-        /*
-        $pathSegment_2 = $pagePathArray[1] ?? '';
-        if (strlen($pathSegment_2) == 0) {
-            $filter = "\"name\" LIKE 'list%'";
-            $contentData = Db::getDbStructureInfo($filter);
-            $template = 'selectlists.php';
-            break;
-        } else {
-
-        }
-        */
-        ControllerSelectlist::run();
-        break;
-
-
-        //----------------------------------------
-    case 'table':                   // Работа с базой данных
-        list($contentData, $template) = ControllerTable::run($pageRequest);
-        //$contentData = ControllerDb::run($pageRequest);
-        //$template = 'db_info.php';
-        break;
-
-    //----------------------------------------
-    case 'materials':               // Материалы
-        // вывод списка записей таблицы
-        $contentData = Db::getTableData('materials');
-        $template = 'table_edit.php';
-        break;
-
-    //----------------------------------------
-    default:
-        if (file_exists($_SERVER['DOCUMENT_ROOT'] . '/content/' . $pageName . '.php')) {
-            // если найден одноименный php-файл
-            $template = $pageName . '.php';
-        }
+    default:                    // Веб-запросы
+        $router = 'web.php';
         break;
 };
 
-// Обработка результатов, полученных от контроллера
-//$content = $data;
-/*
-if (strlen($app->template) == 0) {
-    // не указан шаблон для вывода
-    $app->template = 'page_not_exist.php';
-}
-*/
-// Вывод результатов
-//include_once ($_SERVER['DOCUMENT_ROOT'] . "/content/templates/{$app->template}");
-
-include_once $app->templatePath($template);
+// Подключение соответствующего роутера
+require_once $_SERVER['DOCUMENT_ROOT'] . '/content/routers/' . $router;

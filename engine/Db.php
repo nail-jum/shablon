@@ -259,8 +259,11 @@ class Db
         // выполнение подготовленного запроса
         $result = self::preparedExec($sql, $values);
         if ($result == false) {
-            return Db::errorInfo();
+            //return Db::errorInfo();
+            return false;
         }
+        return self::$pdo->lastInsertRowid();
+        /*
         return [
             'status' => 'ok',
             'data' => [
@@ -268,6 +271,7 @@ class Db
                 'lastInsertId' => self::$pdo->lastInsertId(),
             ],
         ];
+        */
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - -
@@ -351,6 +355,7 @@ class Db
         }
         return [
             'title' => $tableInfo['title'],
+            'primary_key' => $tableInfo['primary_key'],
             'fields' => $columnsInfo,
         ];
     }
@@ -405,6 +410,22 @@ class Db
     // - - - - - - - - - - - - - - - - - - - - - - - -
     // Вывод данных таблицы
     // - - - - - - - - - - - - - - - - - - - - - - - -
+    static function selectTable($tableName, $start = 0, $count = false)
+    {
+        if (strlen($tableName) == 0) {
+            self::$errorMessage[] = "Не указано имя таблицы.";
+            return false;
+        }
+        if (!self::tableExists($tableName)) {
+            return false;
+        }
+        // выполнение подготовленного запроса
+        //$request = self::query("SELECT * FROM `$tableName`");
+        $sql = "SELECT * FROM :tableName";
+        $result = self::preparedExec($sql, ['tableName' => $tableName]);
+        return $result->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     static function getTableData($tableName, $start = 0, $count = false)
     {
         if (strlen($tableName) == 0) {
@@ -422,15 +443,17 @@ class Db
         $request = self::query("SELECT * FROM `$tableName`");
         $data = [];
         while ($row = $request->fetch(PDO::FETCH_ASSOC)) {
-            $data[$row['id']] = $row;
+            //$data[$row['id']] = $row;
+            $data[] = $row;
         }
 
         return [
             'status' => 'ok',
             'data' => [
                 'name' => $tableName,
-                'title' => $columnsInfo['title'],
+                //'title' => $columnsInfo['title'],
                 'columns' => $columnsInfo['fields'],
+                'primary_key' => $columnsInfo['primary_key'],
                 'data' => $data,
             ],
         ];

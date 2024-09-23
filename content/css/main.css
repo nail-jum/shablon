@@ -115,6 +115,52 @@ h2 {
     vertical-align: bottom;
 }
 
+/* Стили для таблицы заказов */
+table.orders {
+    margin: 0 auto;
+    min-width: 600px;
+    font-size: 14px;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-width: 0 0 1px 1px;
+    border-style: solid;
+    border-color: grey;
+}
+
+table.orders th {
+    position: sticky;
+    top: 0;
+    padding: 4px 6px;
+    border-width: 1px 1px 1px 0;
+    border-style: solid;
+    border-color: grey;
+    background-color: white;
+    font-size: 12px;
+    color: dimgray;
+}
+
+table.orders td {
+    border-width: 0 1px 1px 0;
+    border-style: solid;
+    border-color: grey;
+    padding: 2px 6px;
+    font-size: 12px;
+}
+
+/* Стили для простой таблицы */
+table.simple {
+    border: 0px;
+    border-collapse: collapse;
+    margin: 0;
+    min-width: 600px;
+    font-size: 14px;
+}
+
+table.simple td, * table.simple th {
+    border: 0px;
+    padding: 2px 6px;
+}
+
 /* Стили для страницы редактирования таблицы */
 table.table-edit {
     border: 1px solid #808080;
@@ -165,3 +211,39 @@ table.test td {
     border: 1px solid red;
     padding: 2px 6px;
 }
+
+/* ------ Стили элементов формы ------ */
+
+.form-div {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 8px;
+    border: 1px dotted gray;
+    text-align: center;
+}
+
+.form-item {
+    display: flex;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.form-item > div {
+    padding: 4px;
+}
+
+.form-item .label {
+    min-width: 200px;
+    text-align: right;
+}
+
+.form-item .input {
+    min-width: 400px;
+    text-align: left;
+}
+
+.input-date {
+    width: 120px;
+}
+
+/* ----------------------------------- */

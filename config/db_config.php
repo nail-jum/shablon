@@ -35,16 +35,17 @@ const DB_CONF = [
         'title' => 'Изделия',
         'fields' => [
             'product_id'    => ['title' => 'id'                     , 'type' => 'integer'],
-            'order_number'  => ['title' => 'Порядковый номер'       , 'type' => 'integer'],
+            'order_id'      => ['title' => 'id заказа'              , 'type' => 'integer'],
+            'number'        => ['title' => 'Порядковый номер'       , 'type' => 'integer'],
             'door_code'     => ['title' => 'Код двери'              , 'type' => 'integer'],
             'width'         => ['title' => 'Ширина'                 , 'type' => 'integer'],
             'height'        => ['title' => 'Высота'                 , 'type' => 'integer'],
             'count'         => ['title' => 'Количество'             , 'type' => 'integer'],
-            'product_type'  => ['title' => 'Тип люка'               , 'type' => 'integer'],
-            'color'         => ['title' => 'Цвет'                   , 'type' => 'integer'],
-            'locking_type'  => ['title' => 'Тип запирания'          , 'type' => 'integer'],
-            'flaps_number'  => ['title' => 'Количество створок'     , 'type' => 'integer'],
-            'comment'       => ['title' => 'Примечание'                 , 'type' => 'text'],
+            'hatch_type_id' => ['title' => 'Тип люка'               , 'type' => 'integer'],
+            'color_id'      => ['title' => 'Цвет'                   , 'type' => 'integer'],
+            'lock_type_id'  => ['title' => 'Тип запирания'          , 'type' => 'integer'],
+            'flaps_count'   => ['title' => 'Количество створок'     , 'type' => 'integer'],
+            'comment'       => ['title' => 'Примечание'             , 'type' => 'text'],
         ],
         'primary_key' => 'material_id',
     ],
@@ -99,6 +100,16 @@ const DB_CONF = [
         ],
         'primary_key' => 'item_id',
     ],
+    'list_product_type' => [
+        'title' => 'Типы люка',
+        'fields' => [
+            'item_id'     => ['title' => 'id'               , 'type' => 'integer'],
+            'name'        => ['title' => 'Наименование'     , 'type' => 'text'],
+            'description' => ['title' => 'Описание'         , 'type' => 'text'],
+            'priority'    => ['title' => 'Очередность'      , 'type' => 'integer', 'default' => 99],
+        ],
+        'primary_key' => 'item_id',
+    ],
     'list_flaps_count' => [
         'title' => 'Количество створок',
         'fields' => [
@@ -142,6 +153,28 @@ const DB_DEFAULT_DATA = [
         ],
     ],
 
+    'list_product_type' => [
+        'fields' => ['name', 'description'],
+        'data' => [
+            ['БОНД Лайт', ''],
+            ['Гранит', ''],
+            ['Гранит ПЖ', ''],
+            ['Каркас П-образный', ''],
+            ['Напол. Нерж.', ''],
+            ['Напольный Полит.', ''],
+            ['Парус Заказ', ''],
+            ['Парус Склад', ''],
+            ['Подлючник', ''],
+            ['Ручка Хефеле', ''],
+            ['Ручка Хаммер', ''],
+            ['Слайдер', ''],
+            ['Слайдер ПЖ', ''],
+            ['Слайдер Покраска', ''],
+            ['Чашка декоративная', ''],
+        ],
+    ],
+
+
     'list_flaps_count' => [
         'fields' => ['name', 'description'],
         'data' => [
@@ -158,6 +191,7 @@ const DB_DEFAULT_DATA = [
             ['3', 'с почтовым замком'],
         ],
     ],
+
 
     'colors' => [
         'fields' => ['color_id', 'name', 'description', 'value'],

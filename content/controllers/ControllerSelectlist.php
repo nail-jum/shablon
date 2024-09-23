@@ -18,11 +18,18 @@ class ControllerSelectlist
                 'info' => ["Неверный выбор обработчика для запроса $pagePathArray[0]"],
             ];
         }
-        $requestCategory = $pagePathArray[1] ?? 'info';
 
-        switch ($requestCategory) {
+        //$requestCategory = $pagePathArray[1] ?? 'info';
+        $urlSecondSegment = $urlArray[1] ?? 'info';
+        /*
+        if ($urlSecondSegment == '') {
+            $urlSecondSegment = 'main';
+        }
+        */
+
+        switch ($urlSecondSegment) {
             //----------------------------------------
-            case 'info':                        // Информация о базе данных
+            case 'info0':                        // Информация о базе данных
                 $contentData = Db::getDbStructure();
                 $template = 'db_info.php';
                 break;
@@ -34,10 +41,10 @@ class ControllerSelectlist
                 break;
 
             //----------------------------------------
-            case 'selectlists':                 // Список справочников
+            case 'info':                 // Список справочников
                 $filter = "\"name\" LIKE 'list%'";
                 $contentData = Db::getDbStructureInfo($filter);
-                $template = 'db_lists.php';
+                $template = 'selectlists.php';
                 break;
 
             //----------------------------------------
