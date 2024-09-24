@@ -1,23 +1,31 @@
 <?php
 
 // Массив с данными в табличной форме
-$data = [
-     1 => ['id' =>  1, 'content' => 'Ствол дерева'  , 'parent' => 0],
-     2 => ['id' =>  2, 'content' => 'Ветка дерева 1', 'parent' => 1],
-     3 => ['id' =>  3, 'content' => 'Ветка дерева 2', 'parent' => 1],
-     4 => ['id' =>  4, 'content' => 'Ветка дерева 3', 'parent' => 1],
-     5 => ['id' =>  5, 'content' => 'Ветка дерева 4', 'parent' => 2],
-     6 => ['id' =>  6, 'content' => 'Ветка дерева 5', 'parent' => 2],
-     7 => ['id' =>  7, 'content' => 'Ветка дерева 6', 'parent' => 3],
-     8 => ['id' =>  8, 'content' => 'Ветка дерева 7', 'parent' => 3],
-     9 => ['id' =>  9, 'content' => 'Ветка дерева 8', 'parent' => 3],
-    10 => ['id' => 10, 'content' => 'Ветка дерева 9', 'parent' => 4],
-    11 => ['id' => 11, 'content' => 'Ветка дерева 10', 'parent' => 1],
+// Можно экспериментировать
+// id должны быть уникальными !!!
+$baseData = [
+    ['id' =>  1, 'content' => 'Ветка 1 (ствол)', 'parent' => 0],
+    ['id' =>  2, 'content' => 'Ветка дерева 2', 'parent' => 1],
+    ['id' =>  3, 'content' => 'Ветка дерева 3', 'parent' => 1],
+    ['id' =>  4, 'content' => 'Ветка дерева 4', 'parent' => 1],
+    ['id' =>  5, 'content' => 'Ветка дерева 5', 'parent' => 2],
+    ['id' =>  6, 'content' => 'Ветка дерева 6', 'parent' => 12],
+    ['id' =>  7, 'content' => 'Ветка дерева 7', 'parent' => 3],
+    ['id' =>  8, 'content' => 'Ветка дерева 8', 'parent' => 3],
+    ['id' =>  9, 'content' => 'Ветка дерева 9', 'parent' => 3],
+    ['id' => 10, 'content' => 'Ветка дерева 10', 'parent' => 4],
+    ['id' => 11, 'content' => 'Ветка дерева 11', 'parent' => 1],
+    ['id' => 12, 'content' => 'Ветка дерева 12', 'parent' => 4],
 ];
 
+// Рабочий массив
+$data = [];
+foreach ($baseData as $item) {
+    $data[$item['id']] = $item;
+}
 // Вспомогательный массив веток
 $arrayBranches = [];
-foreach ($data as $item) {
+foreach ($baseData as $item) {
     $parent_id = $item['parent'];
     if (!isset($arrayBranches[$parent_id])) {
         $arrayBranches[$parent_id] = [];
@@ -27,7 +35,6 @@ foreach ($data as $item) {
         $data[$parent_id]['items'][] = $item['id'];
     }
 }
-
 // Функция формирования древовидного массива
 function getTreeItems($idList, $colNumber = 0)
 {
@@ -56,8 +63,8 @@ list($arrayTree, $treeRowCount) = getTreeItems($arrayBranches[0]);
 $tableArray = [];
 $columnCount = 0;
 $rowCount = 0;
-$jsTableArray = '';
-$jsTableArray .= 'tableArray = [' . PHP_EOL;
+$jsData = '';
+$jsData .= 'tableArray_0 = [' . PHP_EOL;
 // Функция формирования массива для вывода данных на экран в виде таблицы
 function formTableArray($branch, $colNumber = 0)
 {
@@ -65,37 +72,60 @@ function formTableArray($branch, $colNumber = 0)
     global $tableArray;
     global $columnCount;
     global $rowCount;
-    global $jsTableArray;
+    global $jsData;
     static $rowNuber = 0;
-    $items = [];
+    //$items = [];
     $columnCount = $colNumber + 1;
     foreach ($branch as $item) {
         if (!isset($tableArray[$rowNuber])) {
             $tableArray[$rowNuber] = [];
         }
         $id = $item['id'];
-        /*
-        $tableArray[$rowNuber][$colNumber] = [
-            'rowspan' => $item['row-count'] ?? 1,
-            'content' => $item['content']
-        ];
-        */
-        //$data[$id]['rowspan'] =
         $tableArray[$rowNuber][$colNumber] = $id;
-        $jsTableArray .= '{ "row": ' . $rowNuber . ', "col": ' . $colNumber . ', "rowspan": ' . ($data[$id]['row-count'] ?? 1) . ', "val": "' . $data[$id]['content'] . '"},' . PHP_EOL;
+        $data[$id]['row-number'] = $rowNuber;
+        $jsData .= '{ "row": ' . $rowNuber . ', "col": ' . $colNumber . ', "": "' . $data[$id]['content'] . '"},' . PHP_EOL;
         if (count($item['items'] ?? []) > 0) {
             formTableArray($item['items'], $colNumber + 1);
         } else {
             $rowNuber++;
         }
     }
-    $rowCount = $data[ $branch[0]['id'] ]['row-count'];
+    $rowCount = $data[$branch[0]['id']]['row-count'];
 }
-
 formTableArray($arrayTree);
-$jsTableArray .= '];' . PHP_EOL;
-$jsTableArray .= 'columnCount = ' . $columnCount . ';' . PHP_EOL;
-$jsTableArray .= 'rowCount = ' . $rowCount . ';' . PHP_EOL;
+
+$jsData .= '];' . PHP_EOL;
+$jsData .= 'columnCount = ' . $columnCount . ';' . PHP_EOL;
+$jsData .= 'rowCount = ' . $rowCount . ';' . PHP_EOL;
+
+// Формирование массива для JS
+$jsData .= 'dataArray = {' . PHP_EOL;
+foreach ($data as $id => $row) {
+    $jsData .= "\"$id\": {";
+    foreach ($row as $key => $val) {
+        if (is_array($val)) {
+            $jsData .= "\"$key\": [";
+            foreach ($val as $subVal) {
+                $jsData .= $subVal . ',';
+            }
+            $jsData .= "], ";
+        } else {
+            $jsData .= "\"$key\": \"$val\", ";
+        }
+    }
+    $jsData .= "}," . PHP_EOL;
+}
+$jsData .= "}," . PHP_EOL;
+
+$jsData .= 'tableArray = {' . PHP_EOL;
+foreach ($tableArray as $rowNumber => $row) {
+    $jsData .= "$rowNumber: {";
+    foreach ($row as $colNumber => $id) {
+        $jsData .= "$colNumber: $id, ";
+    }
+    $jsData .= "}," . PHP_EOL;
+}
+$jsData .= "}," . PHP_EOL;
 
 ?>
 <!DOCTYPE html>
@@ -131,6 +161,13 @@ $jsTableArray .= 'rowCount = ' . $rowCount . ';' . PHP_EOL;
         table.border td {
             padding: 2px 8px;
             border: solid 1px gray;
+            background-color: #f8f8f8;
+        }
+
+        table.border td.noborder {
+            padding: 2px 8px;
+            border: solid 0px gray;
+            background-color: #ffffff;
         }
 
         .c {
@@ -140,74 +177,131 @@ $jsTableArray .= 'rowCount = ' . $rowCount . ';' . PHP_EOL;
         div.flex {
             display: flex;
             justify-content: center;
+            flex-wrap: wrap;
         }
 
-        div.flex>div {
+        div.flex > div {
             padding: 8px;
         }
 
         div#tree-image {
             position: relative;
+            margin: 0 auto;
             border: solid 1px gray;
         }
 
-        div.tree-item {
-            /*display: table-cell;*/
-            /*display: inline;*/
+        div#tree-image-items {
             position: absolute;
-            /*position: relative;*/
+            top: 0;
+            left: 0;
+        }
+
+        div.tree-item {
+            position: absolute;
+            box-sizing: border-box;
             width: 160px;
             height: 40px;
+            padding-top: 4px;
             border: solid 1px gray;
             background-color: #fff;
             text-align: center;
-            /*vertical-align: middle;*/
+        }
+
+        div.tree-item:hover {
+            background-color: #b8ffff;
+            cursor: pointer;
+        }
+
+        div.select-direct {
+            width: 200px;
+            margin: 0 auto 8px;
         }
     </style>
 
     <script>
-        <?= $jsTableArray; ?>
-
-        divWidth = 160;
+        <?= $jsData; ?>
+        divWidth = 140;
         divHeight = 40;
         deltaX = 100;
-        deltaY = 10;
+        deltaY = 20;
+        let canvas;
+        let ctx;
+
+        function drawTree(direction) {
+            // Очищаем все пространство холста
+            $("#tree-image-items").empty();
+            //ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#f4f4f4";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.lineWidth = "1";
+            ctx.strokeStyle = "blue";
+
+            $.each(tableArray, function(rowNumber, row) {
+                $.each(row, function(colNumber, id) {
+                    rowspan = dataArray[id]['row-count'];
+                    if (direction == 1) {
+                        // прямое дерево
+                        dataArray[id]['x'] = deltaX + colNumber * rowStep;
+                    } else {
+                        // обратное дерево
+                        dataArray[id]['x'] = imageWidth - (parseInt(colNumber) + 1) * rowStep;
+                    }
+                    y = deltaY + (parseInt(rowNumber) + (rowspan - 1) / 2) * topStep;
+                    dataArray[id]['y'] = y;
+                    dataArray[id]['y1'] = dataArray[id]['y'] + divHeight / 2;
+                });
+            });
+
+            // графический вывод элементов дерева
+            ctx.beginPath();
+            $.each(dataArray, function(id, item) {
+                items = item['items'] ?? [];
+                for (subId of items) {
+                    if (direction == 1) {
+                        // прямое дерево
+                        ctx.moveTo(item['x'] + divWidth, item['y1']);
+                        ctx.lineTo(dataArray[subId]['x'], dataArray[subId]['y1']);
+                    } else {
+                        // обратное дерево
+                        ctx.moveTo(item['x'], item['y1']);
+                        ctx.lineTo(dataArray[subId]['x'] + divWidth, dataArray[subId]['y1']);
+                    }
+                }
+                var newDiv = $("<div>");
+                newDiv.addClass("tree-item");
+                newDiv.html(item['content']);
+                newDiv.css("top", item['y']);
+                newDiv.css("left", item['x']);
+                $("#tree-image-items").append(newDiv);
+            });
+            ctx.stroke(); // Draw it
+        } //drawTree()
 
         $(document).ready(function() {
-            $("#tree-image").css("height", 10 + rowCount * 50);
-
-            let canvas = document.getElementById("tree-image-canvas");
-            canvas.setAttribute('width', 1000);
-            canvas.setAttribute('height', 500);
-
-            let ctx = canvas.getContext("2d");
-            ctx.lineWidth = "1";
-            ctx.strokeStyle = "blue"; // Green path
+            imageHeight = rowCount * (divHeight + deltaY) + deltaY;
+            imageWidth = columnCount * (divWidth + deltaX) + deltaX;
+            $("#tree-image").css("height", imageHeight);
+            $("#tree-image").css("width", imageWidth);
+            canvas = document.getElementById("tree-image-canvas");
+            canvas.setAttribute('width', imageWidth);
+            canvas.setAttribute('height', imageHeight);
+            ctx = canvas.getContext("2d");
 
             rowStep = divWidth + deltaX;
             topStep = divHeight + deltaY;
 
-            ctx.beginPath();
+            value = $('input[name="tree-direction"]:checked').val();
+            drawTree(value);
 
-            $.each(tableArray, function(index, value) {
-                x = deltaX + value['col'] * rowStep;
-                y = deltaY + (value['row'] + (value['rowspan'] - 1) / 2) * topStep;
-                x1 = x + divWidth / 2;
-                y1 = y + divHeight / 2;
-                x2 = x1 + 100;
-                y2 = y1;
-                ctx.moveTo(x1, y1);
-                ctx.lineTo(x2, y2);
-                var newDiv = $("<div>");
-                newDiv.addClass("tree-item");
-                newDiv.html(value['val']);
-                newDiv.css("top", y);
-                newDiv.css("left", x);
-                $("#tree-image").append(newDiv);
+            $('input[name="tree-direction"]').on('click', function() {
+                value = $('input[name="tree-direction"]:checked').val();
+                drawTree(value);
             });
 
-            ctx.stroke(); // Draw it
+            $(".tree-item").css("width", divWidth);
+            $(".tree-item").css("height", divHeight);
 
+            //console.debug(dataArray);
         });
     </script>
 </head>
@@ -228,6 +322,7 @@ $jsTableArray .= 'rowCount = ' . $rowCount . ';' . PHP_EOL;
             echo '</table>';
             ?>
         </div>
+        <!--
         <div>
             <h2>Массив веток</h2>
             <?php
@@ -236,7 +331,6 @@ $jsTableArray .= 'rowCount = ' . $rowCount . ';' . PHP_EOL;
             foreach ($arrayBranches as $key => $branch) {
                 echo '<tr><td rowspan=' . count($branch) . ' class="c">' . $key . '</td>';
                 foreach ($branch as $item) {
-                    //echo '<td>' . $item['id'] . '</td><td>' . $item['content'] . '</td><td class="c">' . $item['parent'] . '</td></tr><tr>';
                     echo '<td>' . $item . '</td></tr><tr>';
                 }
             }
@@ -247,7 +341,7 @@ $jsTableArray .= 'rowCount = ' . $rowCount . ';' . PHP_EOL;
             <h2>Рабочая таблица</h2>
             <?php
             echo '<table class="border">';
-            echo '<tr><td>id</td><td>содержание</td><td>родитель</td><td>ветви</td><td>row-count</td><td>col-number</td></tr>';
+            echo '<tr><td>id</td><td>содержание</td><td>родитель</td><td>ветви</td><td>row-count</td><td>col-number</td><td>row-number</td></tr>';
             foreach ($data as $item) {
                 echo '<tr><td>' . $item['id'] . '</td><td>' . $item['content'] . '</td><td class="c">' . $item['parent'] . '</td><td>';
                 if (isset($item['items'])) {
@@ -256,22 +350,21 @@ $jsTableArray .= 'rowCount = ' . $rowCount . ';' . PHP_EOL;
                 echo '</td>';
                 echo '<td>' . $item['row-count'] . '</td>';
                 echo '<td>' . $item['col-number'] . '</td>';
+                echo '<td>' . $item['row-number'] . '</td>';
                 echo '</tr>';
             }
             echo '</table>';
             ?>
         </div>
-    </div>
-<!--
-    <div class="flex">
+        -->
         <div>
-            <h2>Вывод информации в виде прямого дерева</h2>
+            <h2>Вывод прямого дерева в виде таблицы</h2>
             <table class="border">
                 <?php
                 foreach ($tableArray as $row) {
                     echo '<tr>';
-                    foreach ($row as $cell) {
-                        echo '<td rowspan="' . $cell['rowspan'] . '">' . $cell['content'] . '</td>';
+                    foreach ($row as $id) {
+                        echo '<td rowspan="' . $data[$id]['row-count'] . '">' . $data[$id]['content'] . '</td>';
                     }
                     echo '</tr>';
                 }
@@ -279,18 +372,19 @@ $jsTableArray .= 'rowCount = ' . $rowCount . ';' . PHP_EOL;
             </table>
         </div>
         <div>
-            <h2>Вывод информации в виде обратного дерева</h2>
+            <h2>Вывод обратного дерева в виде таблицы</h2>
             <table class="border">
                 <?php
                 foreach ($tableArray as $row) {
                     echo '<tr>';
                     $ii = $columnCount - 1;
                     while (!isset($row[$ii])) {
-                        echo '<td></td>';
+                        echo '<td class="noborder"></td>';
                         $ii--;
                     }
                     while (isset($row[$ii])) {
-                        echo '<td rowspan="' . $row[$ii]['rowspan'] . '">' . $row[$ii]['content'] . '</td>';
+                        $id = $row[$ii];
+                        echo '<td rowspan="' . $data[$id]['row-count'] . '">' . $data[$id]['content'] . '</td>';
                         $ii--;
                     }
                     echo '</tr>';
@@ -299,12 +393,17 @@ $jsTableArray .= 'rowCount = ' . $rowCount . ';' . PHP_EOL;
             </table>
         </div>
     </div>
-            -->
-    <div id="tree-image">
-        <canvas id="tree-image-canvas" width="300" height="200"></canvas>
+
+    <h2>Вывод дерева в графическом виде (с использованием JavaScript и CSS)</h2>
+    <div class="select-direct">
+        <input type="radio" name="tree-direction" id="" value="1" checked>прямое дерево<br>
+        <input type="radio" name="tree-direction" id="" value="2">обратное дерево
     </div>
-
-
+    <div id="tree-image">
+        <canvas id="tree-image-canvas"></canvas>
+        <div id="tree-image-items">1234</div>
+    </div>
+    <!--
     <table>
         <tr style="vertical-align: top;">
             <td>
@@ -325,17 +424,15 @@ $jsTableArray .= 'rowCount = ' . $rowCount . ';' . PHP_EOL;
                 <?php print_r($arrayTree); ?>
                 </pre>
             </td>
+            <td>
+                <h2>$tableArray</h2>
+                <pre>
+                <?php print_r($tableArray); ?>
+                </pre>
+            </td>
         </tr>
     </table>
-
-    <pre>
-    <?php //print_r($arrayTree);
-    ?>
-    <?php //print_r($arrayBranches);
-    ?>
-    <?php //print_r($tableArray);
-    ?>
-</pre>
+            -->
 
 </body>
 
