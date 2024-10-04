@@ -135,8 +135,9 @@ table.orders th {
     border-style: solid;
     border-color: grey;
     background-color: white;
-    font-size: 12px;
-    color: dimgray;
+    font-size: 13px;
+    font-weight: normal;
+    color: #404040;
 }
 
 table.orders td {
@@ -145,20 +146,7 @@ table.orders td {
     border-color: grey;
     padding: 2px 6px;
     font-size: 12px;
-}
-
-/* Стили для простой таблицы */
-table.simple {
-    border: 0px;
-    border-collapse: collapse;
-    margin: 0;
-    min-width: 600px;
-    font-size: 14px;
-}
-
-table.simple td, * table.simple th {
-    border: 0px;
-    padding: 2px 6px;
+    vertical-align: top;
 }
 
 /* Стили для страницы редактирования таблицы */
@@ -185,6 +173,20 @@ table.table-edit td {
 
 td.w10 {
     width: 10px;
+}
+
+/* Стили для простой таблицы */
+table.simple {
+    border: 0px;
+    border-collapse: collapse;
+    margin: 0;
+    min-width: 600px;
+    font-size: 14px;
+}
+
+table.simple td, table.simple th {
+    border: 0px;
+    padding: 2px 6px;
 }
 
 /* Стили для страницы редактирования записи */

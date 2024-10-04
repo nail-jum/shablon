@@ -165,15 +165,15 @@ class Db
                 $tableName = $baseRow['name'];
                 // схема таблицы
                 $tableSchema = self::query("pragma table_info('$tableName');");
-                //$tableInfo = $tableSchema->fetchAll(PDO::FETCH_ASSOC);
-                $tableInfo = [];
+                //$tableStructure = $tableSchema->fetchAll(PDO::FETCH_ASSOC);
+                $tableStructure = [];
                 while ($row = $tableSchema->fetch(PDO::FETCH_ASSOC)) {
-                    $tableInfo[$row['name']] = $row;
+                    $tableStructure[$row['name']] = $row;
                 }
                 $baseInfo[$tableName] = [
                     'name' => $tableName,
                     'sql' => $baseRow['sql'],
-                    'fields' => $tableInfo,
+                    'fields' => $tableStructure,
                 ];
             }
             if (count($baseInfo) == 0) {
@@ -192,10 +192,10 @@ class Db
             return false;
         }
         // Создание/добавление таблиц
-        foreach (DB_CONF as $tableName => $tableInfo) {
-            $primaryKeyField = $tableInfo['primary_key'] ?? false;
+        foreach (DB_CONF as $tableName => $tableConfig) {
+            $primaryKeyField = $tableConfig['primary_key'] ?? false;
             $sqlArray = [];
-            foreach ($tableInfo['fields'] as $fieldName => $field) {
+            foreach ($tableConfig['fields'] as $fieldName => $field) {
                 $notNull = (bool) ($field['notnull'] ?? false);
                 $defaulValue = $field['default'] ?? false;
                 $sqlArray[] =
@@ -235,7 +235,7 @@ class Db
             'status' => 'ok',
             'data' => [
                 'sql' => $sql,
-                'lastInsertId' => self::$pdo->lastInsertId(),
+                //'lastInsertId' => self::$pdo->lastInsertId(),
             ],
         ];
     }
@@ -256,22 +256,15 @@ class Db
             $values[] = $field['value'];
         }
         $sql = "INSERT INTO \"$tableName\"(\"" . implode('","', $fields) . "\") VALUES(" . implode(',', $placeholders) . ');';
+
         // выполнение подготовленного запроса
         $result = self::preparedExec($sql, $values);
         if ($result == false) {
-            //return Db::errorInfo();
+            $logFile = $_SERVER['DOCUMENT_ROOT'] . '/log/Db_' . date('Y-m-d') . '.log';
+            file_put_contents($logFile, '  ' . implode('  ' . PHP_EOL, self::$errorMessage) . PHP_EOL, FILE_APPEND);
             return false;
         }
-        return self::$pdo->lastInsertRowid();
-        /*
-        return [
-            'status' => 'ok',
-            'data' => [
-                'sql' => $sql,
-                'lastInsertId' => self::$pdo->lastInsertId(),
-            ],
-        ];
-        */
+        return self::$pdo->lastInsertId();
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - -
@@ -341,11 +334,11 @@ class Db
     // - - - - - - - - - - - - - - - - - - - - - - - -
     // Параметры столбцов для вывода данных на экран
     // - - - - - - - - - - - - - - - - - - - - - - - -
-    static function tableColumnsInfo($tableName)
+    static function tableInfo($tableName)
     {
         $columnsInfo = [];
-        $tableInfo = DB_CONF[$tableName];
-        foreach ($tableInfo['fields'] as $fieldName => $fieldInfo) {
+        $tableConfig = DB_CONF[$tableName];
+        foreach ($tableConfig['fields'] as $fieldName => $fieldInfo) {
             $columnsInfo[$fieldName] = [
                 'name'  => $fieldName,                  // имя поля
                 'title' => $fieldInfo['title'],         // шапка столбца
@@ -354,8 +347,8 @@ class Db
             ];
         }
         return [
-            'title' => $tableInfo['title'],
-            'primary_key' => $tableInfo['primary_key'],
+            'title' => $tableConfig['title'],
+            'primary_key' => $tableConfig['primary_key'],
             'fields' => $columnsInfo,
         ];
     }
@@ -419,10 +412,13 @@ class Db
         if (!self::tableExists($tableName)) {
             return false;
         }
-        // выполнение подготовленного запроса
-        //$request = self::query("SELECT * FROM `$tableName`");
-        $sql = "SELECT * FROM :tableName";
-        $result = self::preparedExec($sql, ['tableName' => $tableName]);
+        $sql = "SELECT * FROM \"$tableName\"";
+        $result = self::query($sql);
+        if ($result == false) {
+            $logFile = $_SERVER['DOCUMENT_ROOT'] . '/log/Db_' . date('Y-m-d') . '.log';
+            file_put_contents($logFile, $sql . PHP_EOL . '  ' . implode('  ' . PHP_EOL, self::$errorMessage) . PHP_EOL, FILE_APPEND);
+            return false;
+        }
         return $result->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -438,27 +434,37 @@ class Db
         }
 
         // Параметры столбцов таблицы для вывода на экран
-        $columnsInfo = self::tableColumnsInfo($tableName);
+        $tableInfo = self::tableInfo($tableName);
+        $primary_key = $tableInfo['primary_key'];
+
         // Данные таблицы
-        $request = self::query("SELECT * FROM `$tableName`");
+        $limit = (int) $count;
+        $offset = (int) $start;
+        if ($limit > 0) {
+            $sqlLimit = " LIMIT $limit OFFSET $offset";
+            //$request = self::query("SELECT * FROM \"$tableName\" LIMIT ");
+        } else {
+            $sqlLimit = "";
+        }
+        $sql = "SELECT * FROM \"$tableName\"" . $sqlLimit;
+        $request = self::query($sql);
         $data = [];
         while ($row = $request->fetch(PDO::FETCH_ASSOC)) {
-            //$data[$row['id']] = $row;
-            $data[] = $row;
+            $data[$row[$primary_key]] = $row;
+            //$data[] = $row;
         }
 
         return [
             'status' => 'ok',
             'data' => [
                 'name' => $tableName,
-                //'title' => $columnsInfo['title'],
-                'columns' => $columnsInfo['fields'],
-                'primary_key' => $columnsInfo['primary_key'],
+                'columns' => $tableInfo['fields'],
+                'primary_key' => $tableInfo['primary_key'],
                 'data' => $data,
             ],
         ];
     }
-
+/*
     // - - - - - - - - - - - - - - - - - - - - - - - -
     // Вывод данных записи
     // - - - - - - - - - - - - - - - - - - - - - - - -
@@ -496,7 +502,7 @@ class Db
             return Db::errorInfo();
         }
         // Параметры столбцов таблицы для вывода на экран
-        $columnsInfo = self::tableColumnsInfo($tableName);
+        $columnsInfo = self::tableInfo($tableName);
 
         return [
             'status' => 'ok',
@@ -510,7 +516,6 @@ class Db
             ],
         ];
     }
-
+*/
 }
-
 

@@ -26,6 +26,11 @@ switch ($urlFirstSegment) {
         break;
 
     //----------------------------------------
+    case 'orders':                  // Список заказов с изделиями
+        ControllerOrders::run();
+        break;
+
+    //----------------------------------------
     case 'db':                      // Работа с базой данных
         ControllerDb::run();
         break;
@@ -39,7 +44,7 @@ switch ($urlFirstSegment) {
     //----------------------------------------
     case 'test':                    // Страница для тестов
         //$app->contentData = $pageRequest;
-        $app->template = 'test.php';
+        $app->template = 'test-tree.php';
         break;
 
     //----------------------------------------
@@ -61,7 +66,8 @@ switch ($urlFirstSegment) {
 
         //----------------------------------------
     case 'table':                   // Работа с базой данных
-        list($contentData, $template) = ControllerTable::run($pageRequest);
+        //list($contentData, $template) = ControllerTable::run($pageRequest);
+        list($contentData, $template) = ControllerTable::run();
         //$contentData = ControllerDb::run($pageRequest);
         //$template = 'db_info.php';
         break;

@@ -4,7 +4,7 @@ $mainMenu = [
     ['title' => 'Заказы'                , 'link' => '/orders'],
     ['title' => 'Спецификации'          , 'link' => '/specifications'],
     ['title' => 'Материалы'             , 'link' => '/materials'],
-    ['title' => 'Справочники'           , 'link' => '/selectlists', 'second-menu' => 'selectlistMenu'],
+    //['title' => 'Справочники'           , 'link' => '/selectlists', 'second-menu' => 'selectlistMenu'],
     ['title' => 'База данных'           , 'link' => '/db/info'],
     ['title' => 'App info'              , 'link' => '/app-info/test?d=456'],
 ];

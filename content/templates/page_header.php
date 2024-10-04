@@ -9,7 +9,7 @@ $weekDays = [ 1 => 'понедельник', 'вторник', 'среда', 'ч
 <head>
     <title>Тестовый сайт</title>
     <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="/content/css/main.css?11">
+    <link rel="stylesheet" type="text/css" href="/content/css/main.css?13">
     <link rel="stylesheet" type="text/css" href="/content/css/menu.css?4">
     <script src="/content/js/jquery-3.6.3.min.js"></script>
     <script src="/content/js/api-tools.js?3<?=time();?>"></script>

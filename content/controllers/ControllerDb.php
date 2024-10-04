@@ -14,7 +14,7 @@ class ControllerDb
     static function loadFromExcel()
     {
         global $app;
-        $array = MyFuncExcel::readExcelFromPost('file');
+        $array = MyFuncExcel::readExcelFromPost('file-source');
         if ($array == false) {
             $app->contentData = [
                 'status' => 'error',
@@ -23,7 +23,6 @@ class ControllerDb
             ];
             return false;
         }
-
         // Создание массива заказов
         $orders = [];
         $productTypes = [];
@@ -68,39 +67,54 @@ class ControllerDb
         }
 
         // Справочник типов люков
-        $result = Db::selectTable('list_product_type');
+        /*
+        $result = Db::selectTable('list_hatch_types');
         $hatchTypes = [];
         foreach ($result as $row) {
             $hatchTypes[$row['name']] = $row['item_id'];
         }
+        */
+        $hatchTypes   = Table::arrayOfTable('list_hatch_types', 'name');
+        $colors       = Table::arrayOfTable('list_colors', 'name');
+
+        // Очистка таблиц
+        Db::exec('DELETE FROM "orders"');
+        Db::exec('DELETE FROM "products"');
 
         // Заполнение базы данных
         foreach ($orders as $order) {
+            // добавление заказа
             $orderId = Db::rowInsert('orders', $order['fields']);
+            // добавление изделий в заказе
             foreach ($order['products'] as $product) {
+                $hatchTypeId = $hatchTypes[$product['hatch_type']]['item_id'] ?? 0;
+                $colorId = $colors[$product['color']]['item_id'] ?? 0;
                 $fields = [
+                    ['name' => 'order_id'       , 'value' => $orderId ],
                     ['name' => 'number'         , 'value' => $product['number'] ],
                     ['name' => 'door_code'      , 'value' => $product['door_code'] ],
                     ['name' => 'width'          , 'value' => $product['width'] ],
                     ['name' => 'height'         , 'value' => $product['height'] ],
                     ['name' => 'count'          , 'value' => $product['count'] ],
                     ['name' => 'flaps_count'    , 'value' => $product['flaps_count'] ],
-                    ['name' => 'hatch_type'     , 'value' => $product[''] ],
-                    ['name' => 'color'          , 'value' => $product['color'] ],
-                    ['name' => 'locking_type'   , 'value' => $product['locking_type'] ],
+                    ['name' => 'hatch_type_id'  , 'value' => $hatchTypeId ],
+                    ['name' => 'color_id'       , 'value' => $colorId ],
+                    ['name' => 'lock_type_id'   , 'value' => $product['locking_type'] ],
                     ['name' => 'comment'        , 'value' => $product['comment'] ],
-
                 ];
-
+                $productId = Db::rowInsert('products', $fields);
             }
         }
 
-        $app->contentData = [
+       return [
             'status' => 'ok',
             //'data' => $array,
-            'data' => [$productTypes, $orders],
+            'data' => [
+                'productTypes' => $productTypes,
+                'orders' => $orders,
+            ],
         ];
-        return true;
+        //return true;
     }
 
     static function run()
@@ -128,6 +142,13 @@ class ControllerDb
             case 'create':                      // Создание базы данных по умолчанию
                 $contentData = Db::dbCreate();
                 $template = 'result_info.php';
+                break;
+
+            //----------------------------------------
+            case 'load':                 // Загрузка данных из файла (тестовая)
+                $contentData = self::loadFromExcel();
+                //self::loadFromExcel();
+                $template = 'db_load_result.php';
                 break;
 
             //----------------------------------------

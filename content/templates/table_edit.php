@@ -20,6 +20,7 @@ $tableName    = $table->tableName ?? '';
 $tableTitle   = $table->tableTitle ?? '';
 $tableColumns = $table->fields ?? [];
 $tableData    = $table->rows ?? [];
+$tableRowCount = $table->rowCount ?? 0;
 
 //$pageTitle = 'Редактирование таблицы ' . $tableName;
 include_once('templates/page_header.php');
@@ -54,6 +55,7 @@ include_once('templates/page_header.php');
 </pre>
 
 <h1>Таблица "<?= $tableTitle ?>"</h1>
+Количество записей: <?= $tableRowCount ?>
 
 <?= $errorMessage ?>
 

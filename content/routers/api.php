@@ -14,15 +14,8 @@ $template = '';         // шаблон для вывода
 switch ($urlSecondSegment) {
 
     //----------------------------------------
-    case 'db-load':                 // Главная страница
+    case 'db-load':                 // Загрузка данных из файла
         ControllerDb::loadFromExcel();
-        /*
-        $app->contentData = [
-            'status' => 'error',
-            'data' => $app->url['path'],
-            'info' => ['Не удалось прочитать файл'],
-        ];
-        */
         break;
 
     //----------------------------------------

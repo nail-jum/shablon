@@ -17,6 +17,7 @@ if ($dbInfo['status'] == 'warning') {
 $tables = $dbInfo['data'] ?? [];    // структура реальной базы данных
 //$dbConfig = DB_CONF;                // шаблон конфигурации базы данных
 
+
 // Создание сводной таблицы с информацией о базе данных
 // (не доделано)
 
@@ -50,7 +51,7 @@ include_once('templates/page_header.php');
         $("#btn-submit").on("click", function() {
             // метод обработки выбран
             let formData = new FormData();
-            formData.append("file", $("#file-source")[0].files[0]);
+            formData.append("file-source", $("#file-source")[0].files[0]);
             //method = $('input[name="method"]:checked').val();
             //link = "/api/excel-processing/" + method;
             link = "/api/db-load";
@@ -90,7 +91,7 @@ include_once('templates/page_header.php');
                 echo "<td rowspan={$fieldsCount} class='vtop'>{$nn}</td>";
                 //echo "<td rowspan={$fieldsCount} class='vtop'>{$table['title']}</td>";
                 echo "<td rowspan={$fieldsCount} class='vtop'></td>";
-                echo "<td rowspan={$fieldsCount} class='vtop'>{$table['name']}</td>";
+                echo "<td rowspan={$fieldsCount} class='vtop'><a href=\"/table/{$table['name']}\">{$table['name']}</a></td>";
             }
             echo '<td>' . $field['name'] . '</td>';
             echo '<td>' . $field['type'] . '</td>';
@@ -106,10 +107,14 @@ include_once('templates/page_header.php');
 
 <div class="form-div">
     Загрузка начальных данных
-    <div>
-        Файл для загрузки: <input type="file" name="file-source" id="file-source"><br>
-    </div>
-    <input type="button" value="Обработать" id="btn-submit"><br>
+    <form action="/db/load" method="post" enctype="multipart/form-data">
+        <div>
+            Файл для загрузки: <input type="file" name="file-source" id="file-source"><br>
+        </div>
+        <br>
+        <input type="button" value="Обработать через API" id="btn-submit"><br><br>
+        <input type="submit" value="Отправить"></p>
+    </form>
 </div>
 
 

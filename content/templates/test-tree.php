@@ -16,6 +16,7 @@ $baseData = [
     ['id' => 10, 'content' => 'Ветка дерева 10', 'parent' => 4],
     ['id' => 11, 'content' => 'Ветка дерева 11', 'parent' => 1],
     ['id' => 12, 'content' => 'Ветка дерева 12', 'parent' => 4],
+    ['id' => 13, 'content' => 'Ветка дерева 13', 'parent' => 99],
 ];
 
 // Рабочий массив
@@ -132,7 +133,7 @@ $jsData .= "}," . PHP_EOL;
 <html lang="ru">
 
 <head>
-    <script src="/content/js/jquery-3.6.3.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <style>
         * {
             font-family: Verdana, Geneva, Tahoma, sans-serif;
@@ -223,7 +224,7 @@ $jsData .= "}," . PHP_EOL;
         divWidth = 140;
         divHeight = 40;
         deltaX = 100;
-        deltaY = 20;
+        deltaY = 15;
         let canvas;
         let ctx;
 
@@ -409,25 +410,25 @@ $jsData .= "}," . PHP_EOL;
             <td>
                 <h2>$data</h2>
                 <pre>
-                <?php print_r($data); ?>
+                <?php //print_r($data); ?>
                 </pre>
             </td>
             <td>
                 <h2>$arrayBranches</h2>
                 <pre>
-                <?php print_r($arrayBranches); ?>
+                <?php //print_r($arrayBranches); ?>
                 </pre>
             </td>
             <td>
                 <h2>$arrayTree</h2>
                 <pre>
-                <?php print_r($arrayTree); ?>
+                <?php //print_r($arrayTree); ?>
                 </pre>
             </td>
             <td>
                 <h2>$tableArray</h2>
                 <pre>
-                <?php print_r($tableArray); ?>
+                <?php //print_r($tableArray); ?>
                 </pre>
             </td>
         </tr>

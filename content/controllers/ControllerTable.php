@@ -6,14 +6,16 @@
 
 class ControllerTable
 {
-    static function run($pageRequest)
+    static function run()
     {
+        global $app;
         // Массив сегментов адреса страницы
-        $pagePathArray = $pageRequest->url['pathArray'];
+        //$pagePathArray = $pageRequest->url['pathArray'];
+        $pagePathArray = $app->url['pathArray'];
         if ($pagePathArray[0] != 'table') {
             return [
                 'status' => 'error',
-                'data' => $pageRequest->url['path'],
+                'data' => $app->url['path'],
                 'info' => ["Неверный выбор обработчика для запроса $pagePathArray[0]"],
             ];
         }
@@ -62,6 +64,7 @@ class ControllerTable
             //----------------------------------------
             default:
                 // вывод списка записей таблицы
+                $table->getRowCount();
                 $table->getRows();          // изменить (добавить фильтры и сортировку)
                 $contentData = $table;
                 $template = 'table_edit.php';
