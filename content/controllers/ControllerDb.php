@@ -11,7 +11,7 @@ class ControllerDb
     /**
      * Загрузка начальных данных из файла Excel
      */
-    static function loadFromExcel()
+    static function loadOrdersFromExcel()
     {
         global $app;
         $array = MyFuncExcel::readExcelFromPost('file-source');
@@ -32,8 +32,10 @@ class ControllerDb
             if ( (strlen($orderName) == 0) || ($orderName == 'Зак.в произв.') ) {
                 continue;
             }
-            $dateCreate = strlen($row[2]) > 0 ? date('Y-m-d', dateExcelToUnix($row[2])) : '';
-            $dateEndPlan = strlen($row[3]) > 0 ? date('Y-m-d', dateExcelToUnix($row[3])) : '';
+            //$dateCreate = strlen($row[2]) > 0 ? date('Y-m-d', dateExcelToUnix($row[2])) : '';
+            //$dateEndPlan = strlen($row[3]) > 0 ? date('Y-m-d', dateExcelToUnix($row[3])) : '';
+            $dateCreate = dateExcelToSql($row[2]);
+            $dateEndPlan = dateExcelToSql($row[3]);
             $hatchType = $row[5];
             $color = (int) $row[6];
             $lockingType = (int) $row[7];
@@ -66,14 +68,6 @@ class ControllerDb
             //$productTypes[$hatchType] = ($productTypes[$hatchType] ?? 0) + 1;
         }
 
-        // Справочник типов люков
-        /*
-        $result = Db::selectTable('list_hatch_types');
-        $hatchTypes = [];
-        foreach ($result as $row) {
-            $hatchTypes[$row['name']] = $row['item_id'];
-        }
-        */
         $hatchTypes   = Table::arrayOfTable('list_hatch_types', 'name');
         $colors       = Table::arrayOfTable('list_colors', 'name');
 
@@ -117,6 +111,68 @@ class ControllerDb
         //return true;
     }
 
+    /**
+     * Загрузка материалов
+     */
+    static function loadMaterialsFromExcel()
+    {
+        global $app;
+        $array = MyFuncExcel::readExcelFromPost('file-source');
+        if ($array == false) {
+            $app->contentData = [
+                'status' => 'error',
+                'data' => $app->url['path'],
+                'info' => ['Не удалось прочитать файл'],
+            ];
+            return false;
+        }
+        Db::exec('DELETE FROM "materials"');     // очистка таблицы
+        foreach ($array as $row) {
+            $fields = [
+                ['name' => 'name'       , 'value' => $row[0]],
+            ];
+            Db::rowInsert('materials', $fields);
+        }
+        return [
+            'data' => $array,
+        ];
+        //return true;
+    }
+
+    /**
+     * Загрузка полуфабрикатов
+     */
+    static function loadSemiproductsFromExcel()
+    {
+        global $app;
+        $array = MyFuncExcel::readExcelFromPost('file-source');
+        if ($array == false) {
+            $app->contentData = [
+                'status' => 'error',
+                'data' => $app->url['path'],
+                'info' => ['Не удалось прочитать файл'],
+            ];
+            return false;
+        }
+        Db::exec('DELETE FROM "semiproducts"');     // очистка таблицы
+        foreach ($array as $row) {
+            $fields = [
+                ['name' => 'name'       , 'value' => $row[0]],
+                ['name' => 'code'       , 'value' => $row[0]],
+            ];
+            Db::rowInsert('semiproducts', $fields);
+        }
+        return true;
+    }
+
+    static function deleteTable($tableName)
+    {
+        if (strlen($tableName) == 0) {
+            return false;
+        }
+        Db::exec("DROP TABLE IF EXISTS \"{$tableName}\"");     // очистка таблицы
+    }
+
     static function run()
     {
         global $app;
@@ -141,13 +197,40 @@ class ControllerDb
             //----------------------------------------
             case 'create':                      // Создание базы данных по умолчанию
                 $contentData = Db::dbCreate();
-                $template = 'result_info.php';
+                Db::loadDefault();
+                //$template = 'result_info.php';
+                $template = 'db_info.php';
                 break;
 
             //----------------------------------------
-            case 'load':                 // Загрузка данных из файла (тестовая)
-                $contentData = self::loadFromExcel();
-                //self::loadFromExcel();
+            case 'update':                      // Создание базы данных по умолчанию
+                $contentData = Db::dbUpdate();
+                //$template = 'result_info.php';
+                $template = 'db_info.php';
+                break;
+
+            //----------------------------------------
+            case 'delete-table':                 // Удаление таблицы (тестовая)
+                $tableName = $pagePathArray[2] ?? '';
+                $contentData = self::deleteTable($tableName);
+                $template = 'db_load_result.php';
+                break;
+
+            //----------------------------------------
+            case 'load-orders':                 // Загрузка данных из файла (тестовая)
+                $contentData = self::loadOrdersFromExcel();
+                $template = 'db_load_result.php';
+                break;
+
+            //----------------------------------------
+            case 'load-materials':                 // Загрузка данных из файла (тестовая)
+                $contentData = self::loadMaterialsFromExcel();
+                $template = 'db_load_result.php';
+                break;
+
+            //----------------------------------------
+            case 'load-semiproducts':                 // Загрузка данных из файла (тестовая)
+                $contentData = self::loadSemiproductsFromExcel();
                 $template = 'db_load_result.php';
                 break;
 
@@ -174,4 +257,13 @@ function dateExcelToUnix($dateExcel)
 // https://stackoverflow.com/questions/50366682/phpspreadsheets-formating-the-date-importing-from-xlsx
 {
     return ($dateExcel - 25569) * 86400;
+}
+
+function dateExcelToSql($dateExcel)
+// https://stackoverflow.com/questions/50366682/phpspreadsheets-formating-the-date-importing-from-xlsx
+{
+    if (strlen($dateExcel) == 0) {
+        return '';
+    }
+    return date('Y-m-d', ($dateExcel - 25569) * 86400);
 }

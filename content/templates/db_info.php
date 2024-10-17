@@ -3,14 +3,10 @@
 $dbInfo = $app->contentData;
 
 $errorMessage = '';
-if ($dbInfo['status'] == 'error') {
-    $errorMessage .= '<div class="error"><h2>Ошибка</h2>' . implode('<br>', $dbInfo['message']);
-    if ($dbInfo['connected'] == false) {
-        $errorMessage .= '<br><br><button onclick="location.href=\'/db/create\';">Создать базу данных</button>';
-    }
-    $errorMessage .= '</div>';
+if (($dbInfo['status'] ?? '') == 'error') {
+    $errorMessage .= '<div class="error"><h2>Ошибка</h2>' . implode('<br>', $dbInfo['message']) . '</div>';
 }
-if ($dbInfo['status'] == 'warning') {
+if (($dbInfo['status'] ?? '') == 'warning') {
     $errorMessage .= '<div class="warning"><h2>Предупреждение</h2>' . implode('<br>', $dbInfo['message']) . '</div>';
 }
 
@@ -26,6 +22,7 @@ include_once('templates/page_header.php');
 ?>
 
 <script>
+    /*
     function showInfo(data) {
         array = data["array"] ?? [];
         link = data["link"] ?? '';
@@ -58,11 +55,18 @@ include_once('templates/page_header.php');
             apiRequest("FILE", link, showInfo, formData);
         });
     });
+    */
 </script>
 
 <h1>Информация о базе данных</h1>
 
 <?= $errorMessage ?>
+<?php if (($dbInfo['connected'] ?? true) == false) { ?>
+    <br><button onclick="location.href='/db/create';">Создать базу данных</button>
+<?php } else { ?>
+    <br><br><button onclick="location.href='/db/update';">Обновить базу данных</button>
+<?php } ?>
+
 
 <table class="table-edit">
     <tr>
@@ -92,6 +96,7 @@ include_once('templates/page_header.php');
                 //echo "<td rowspan={$fieldsCount} class='vtop'>{$table['title']}</td>";
                 echo "<td rowspan={$fieldsCount} class='vtop'></td>";
                 echo "<td rowspan={$fieldsCount} class='vtop'><a href=\"/table/{$table['name']}\">{$table['name']}</a></td>";
+                echo "<td rowspan={$fieldsCount} class='vtop'><a href=\"/db/delete-table/{$table['name']}\"><img class=\"edit-icon\" src=\"/img/icon_del.gif\" alt=\"Удалить\" title=\"Удалить\"></a></td>";
             }
             echo '<td>' . $field['name'] . '</td>';
             echo '<td>' . $field['type'] . '</td>';
@@ -106,24 +111,40 @@ include_once('templates/page_header.php');
 </table>
 
 <div class="form-div">
-    Загрузка начальных данных
-    <form action="/db/load" method="post" enctype="multipart/form-data">
-        <div>
-            Файл для загрузки: <input type="file" name="file-source" id="file-source"><br>
-        </div>
-        <br>
+    <form action="/db/load-orders" method="post" enctype="multipart/form-data">
+        Загрузка заказов (Учёт заказов в производство.xlsx):
+        <input type="file" name="file-source" id="file-source">
+        <input type="submit" value="Загрузить"></p>
+        <!--
         <input type="button" value="Обработать через API" id="btn-submit"><br><br>
-        <input type="submit" value="Отправить"></p>
+        -->
     </form>
 </div>
 
+<div class="form-div">
+    <form action="/db/load-materials" method="post" enctype="multipart/form-data">
+        Загрузка материалов:
+        <input type="file" name="file-source">
+        <input type="submit" value="Загрузить"></p>
+    </form>
+</div>
 
+<div class="form-div">
+    <form action="/db/load-semiproducts" method="post" enctype="multipart/form-data">
+        Загрузка полуфабрикатов:
+        <input type="file" name="file-source">
+        <input type="submit" value="Загрузить"></p>
+    </form>
+</div>
+
+<!--
 <a id="show-debug-info" href="#">Debug Info</a>
 <div id="debug-info">
     <pre>
     <?php echo print_r($dbInfo, true); ?>
     </pre>
 </div>
+-->
 
 
 <?php include_once('templates/page_footer.php'); ?>

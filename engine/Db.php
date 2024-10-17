@@ -188,7 +188,6 @@ class Db
         // Создание базы данных
         self::connect(true);
         if (self::$connected == false) {
-            self::$errorMessage[] = 'Ошибка создания базы данных';
             return false;
         }
         // Создание/добавление таблиц
@@ -207,9 +206,39 @@ class Db
             $sql = "CREATE TABLE IF NOT EXISTS \"$tableName\" (" . implode(',', $sqlArray) . ")";
             self::exec($sql);
         }
+    }
+
+    static function loadDefault()
+    {
         // Заполнение таблиц данными по умолчанию
         foreach (DB_DEFAULT_DATA as $tableName => $defaultData) {
             self::dbMultiInsert($tableName, $defaultData['fields'], $defaultData['data']);
+        }
+    }
+
+    static function dbUpdate()
+    {
+        // Добавление таблиц в базу данных
+        // (копия dbCreate() - доделать проверку и обновление полей)
+        self::connect(true);
+        if (self::$connected == false) {
+            return false;
+        }
+        // Создание/добавление таблиц
+        foreach (DB_CONF as $tableName => $tableConfig) {
+            $primaryKeyField = $tableConfig['primary_key'] ?? false;
+            $sqlArray = [];
+            foreach ($tableConfig['fields'] as $fieldName => $field) {
+                $notNull = (bool) ($field['notnull'] ?? false);
+                $defaulValue = $field['default'] ?? false;
+                $sqlArray[] =
+                    "\"{$fieldName}\" {$field['type']}"
+                    . ($notNull ? "  NOT NULL" : "")
+                    . (($fieldName == $primaryKeyField) ? ' PRIMARY KEY' : '')
+                    . ($defaulValue ? " DEFAULT '$defaulValue'" : '');
+            }
+            $sql = "CREATE TABLE IF NOT EXISTS \"$tableName\" (" . implode(',', $sqlArray) . ")";
+            self::exec($sql);
         }
     }
 
@@ -265,38 +294,6 @@ class Db
             return false;
         }
         return self::$pdo->lastInsertId();
-    }
-
-    // - - - - - - - - - - - - - - - - - - - - - - - -
-    // Вставка данных в таблицу одной записи
-    // - - - - - - - - - - - - - - - - - - - - - - - -
-    static function dbInsert_0($tableName, $fields, $values)
-    {
-        // строка подстановок для запроса
-        $placeholders = str_repeat('?,', count($fields) - 1) . '?';
-        // имена переменных для подстановки в запрос
-        $valNames = [];
-        foreach ($fields as $field) {
-            $valNames[] = ':_' . $field;
-        }
-        $sql = "INSERT INTO \"$tableName\"(\"" . implode('","', $fields) . "\") VALUES(" . implode(',', $valNames) . ');';
-        $request = self::$pdo->prepare($sql);
-
-        $data = [];
-        for ($ii = 0; $ii < count($fields); $ii++) {
-            $data[$valNames[$ii]] = $values[$ii];
-        }
-        $result = $request->execute($data);
-        if ($result == false) {
-            return Db::errorInfo();
-        }
-        return [
-            'status' => 'ok',
-            'data' => [
-                'sql' => $sql,
-                'lastInsertId' => self::$pdo->lastInsertId(),
-            ],
-        ];
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - -
