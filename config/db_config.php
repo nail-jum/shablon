@@ -61,15 +61,14 @@ const DB_CONF = [
         'primary_key' => 'material_id',
     ],
 
-
     'semiproducts' => [
         'title' => 'Полуфабрикаты',
         'fields' => [
-            'semiproduct_id'=> ['title' => 'id'                 , 'type' => 'integer'],
-            'product_id'    => ['title' => 'id изделия'         , 'type' => 'integer'],
-            'name'          => ['title' => 'Наименование'       , 'type' => 'text'],
-            'code'          => ['title' => 'Код'                , 'type' => 'text'],
-            'description'   => ['title' => 'Описание'           , 'type' => 'text'],
+            'semiproduct_id'    => ['title' => 'id'                 , 'type' => 'integer'],
+            'product_id'        => ['title' => 'id изделия'         , 'type' => 'integer'],
+            'name'              => ['title' => 'Наименование'       , 'type' => 'text'],
+            'code'              => ['title' => 'Код'                , 'type' => 'text'],
+            'description'       => ['title' => 'Описание'           , 'type' => 'text'],
         ],
         'primary_key' => 'semiproduct_id',
     ],
@@ -77,18 +76,51 @@ const DB_CONF = [
     'operations' => [
         'title' => 'Операции',
         'fields' => [
-            'operation_id'  => ['title' => 'id'                 , 'type' => 'integer'],
-            'product_id'    => ['title' => 'id изделия'         , 'type' => 'integer'],
-            'semiproduct_id'=> ['title' => 'Полуфабрикат'       , 'type' => 'integer'],
-            'operation_type'=> ['title' => 'Тип операции'       , 'type' => 'integer'],
-            'name'          => ['title' => 'Наименование'       , 'type' => 'text'],
-            'supervisor'    => ['title' => 'Ответственный'      , 'type' => 'text'],
-            'date_create'   => ['title' => 'Дата создания'      , 'type' => 'date'],
-            'date_end_plan' => ['title' => 'Дата завершения'    , 'type' => 'date'],
-            'status'        => ['title' => 'Состояние'          , 'type' => 'text'],
-            'comment'       => ['title' => 'Примечание'         , 'type' => 'text'],
+            'operation_id'      => ['title' => 'id'                 , 'type' => 'integer'],
+            'product_id'        => ['title' => 'id изделия'         , 'type' => 'integer'],
+            'semiproduct_id'    => ['title' => 'Полуфабрикат'       , 'type' => 'integer'],
+            'operation_type'    => ['title' => 'Тип операции'       , 'type' => 'integer'],
+            'name'              => ['title' => 'Наименование'       , 'type' => 'text'],
+            'supervisor'        => ['title' => 'Ответственный'      , 'type' => 'text'],
+            'date_create'       => ['title' => 'Дата создания'      , 'type' => 'date'],
+            'date_end_plan'     => ['title' => 'Дата завершения'    , 'type' => 'date'],
+            'status'            => ['title' => 'Состояние'          , 'type' => 'text'],
+            'comment'           => ['title' => 'Примечание'         , 'type' => 'text'],
         ],
-        'primary_key' => 'material_id',
+        'primary_key' => 'operation_id',
+    ],
+
+    'semiproduct_types' => [
+        'title' => 'Виды полуфабрикатов',
+        'fields' => [
+            'semiproduct_type_id' => ['title' => 'id'                 , 'type' => 'integer'],
+            'name'              => ['title' => 'Наименование'       , 'type' => 'text'],
+            'description'       => ['title' => 'Описание'           , 'type' => 'text'],
+        ],
+        'primary_key' => 'semiproduct_type_id',
+    ],
+
+    'operation_types' => [
+        'title' => 'Виды операций',
+        'fields' => [
+            'operation_type_id' => ['title' => 'id'                 , 'type' => 'integer'],
+            'name'              => ['title' => 'Наименование'       , 'type' => 'text'],
+            'description'       => ['title' => 'Описание'           , 'type' => 'text'],
+        ],
+        'primary_key' => 'operation_type_id',
+    ],
+
+    'specifications' => [
+        'title' => 'Спецификации',
+        'fields' => [
+            'specification_id'    => ['title' => 'id'                 , 'type' => 'integer'],
+            'operation_type_id'   => ['title' => 'id'                 , 'type' => 'integer'],
+            'semiproduct_type_id' => ['title' => 'id'                 , 'type' => 'integer'],
+            'name'                => ['title' => 'Наименование'       , 'type' => 'text'],
+            'conditions'          => ['title' => 'Условия'            , 'type' => 'text'],
+            'description'         => ['title' => 'Описание'           , 'type' => 'text'],
+        ],
+        'primary_key' => 'semiproduct_id',
     ],
 
     'list_colors' => [

@@ -6,6 +6,7 @@ $mainMenu = [
     ['title' => 'Материалы'             , 'link' => '/materials'],
     //['title' => 'Справочники'           , 'link' => '/selectlists', 'second-menu' => 'selectlistMenu'],
     ['title' => 'База данных'           , 'link' => '/db/info'],
+    ['title' => 'Загрузка данных'       , 'link' => '/db/load'],
     ['title' => 'App info'              , 'link' => '/app-info/test?d=456'],
 ];
 

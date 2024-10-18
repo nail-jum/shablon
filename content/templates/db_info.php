@@ -109,33 +109,7 @@ include_once('templates/page_header.php');
     }
     ?>
 </table>
-
-<div class="form-div">
-    <form action="/db/load-orders" method="post" enctype="multipart/form-data">
-        Загрузка заказов (Учёт заказов в производство.xlsx):
-        <input type="file" name="file-source" id="file-source">
-        <input type="submit" value="Загрузить"></p>
-        <!--
-        <input type="button" value="Обработать через API" id="btn-submit"><br><br>
-        -->
-    </form>
-</div>
-
-<div class="form-div">
-    <form action="/db/load-materials" method="post" enctype="multipart/form-data">
-        Загрузка материалов:
-        <input type="file" name="file-source">
-        <input type="submit" value="Загрузить"></p>
-    </form>
-</div>
-
-<div class="form-div">
-    <form action="/db/load-semiproducts" method="post" enctype="multipart/form-data">
-        Загрузка полуфабрикатов:
-        <input type="file" name="file-source">
-        <input type="submit" value="Загрузить"></p>
-    </form>
-</div>
+<br>
 
 <!--
 <a id="show-debug-info" href="#">Debug Info</a>

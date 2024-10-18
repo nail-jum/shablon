@@ -217,6 +217,12 @@ class ControllerDb
                 break;
 
             //----------------------------------------
+            case 'load':                        // Загрузка данных из файла (тестовая)
+                //$contentData = self::loadOrdersFromExcel();
+                $template = 'db_load.php';
+                break;
+
+            //----------------------------------------
             case 'load-orders':                 // Загрузка данных из файла (тестовая)
                 $contentData = self::loadOrdersFromExcel();
                 $template = 'db_load_result.php';
@@ -248,7 +254,7 @@ class ControllerDb
         }
 
         //return [$contentData, $template];
-        $app->contentData = $contentData;
+        $app->contentData = $contentData ?? [];
         $app->template = $template;
     }
 }
