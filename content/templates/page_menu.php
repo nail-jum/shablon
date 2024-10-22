@@ -2,6 +2,7 @@
 $mainMenu = [
     ['title' => 'Главная'               , 'link' => '/'],
     ['title' => 'Заказы'                , 'link' => '/orders'],
+    ['title' => 'Полуфабрикаты'         , 'link' => '/semiproducts'],
     ['title' => 'Спецификации'          , 'link' => '/specifications'],
     ['title' => 'Материалы'             , 'link' => '/materials'],
     //['title' => 'Справочники'           , 'link' => '/selectlists', 'second-menu' => 'selectlistMenu'],

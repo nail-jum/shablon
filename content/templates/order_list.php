@@ -19,16 +19,20 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/content/templates/page_header.php';
     div.order-info table {
         border: 0px;
         border-collapse: collapse;
-        margin: 0;
+        margin: 0 0 auto auto;
         font-size: 14px;
         color: #404040;
-        display: none;
+        /*display: none;*/
     }
 
     div.order-info table td,
     div.order-info table th {
         border: 0px;
         padding: 2px 2px;
+    }
+
+    tbody.add-info {
+        /*display: none;*/
     }
 
     .order-title-name {
@@ -45,9 +49,12 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/content/templates/page_header.php';
 
 <script>
     $(document).ready(function() {
+        $("tbody.add-info").hide();
         $(".order-info-name").on("click", function() {
             id = this.id.substr(2);
-            $(".div_" + id).children("table").toggle();
+            //$(".div_" + id).children("table").toggle();
+            $("#tbody_" + id).toggle();
+            $(".tbody2_" + id).toggle();
             return false;
         });
         $(".order-title-name").on("click", function() {
@@ -66,7 +73,8 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/content/templates/page_header.php';
         </tr>
         <tr>
             <th class="order-title-name">Наименование</th>
-            <th>Дата<br>завершения</th>
+            <!--<th>Дата<br>завершения</th>-->
+            <th><a href="#"><img src="/img/icon_add.gif" alt="Добавить" title="Добавить заказ"></a></th>
             <th>Наименование</th>
             <th>Кол-во</th>
             <th>Ширина</th>
@@ -74,6 +82,7 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/content/templates/page_header.php';
             <th>Тип люка</th>
             <th>Тип запирания</th>
             <th>Кол-во<br>створок</th>
+            <th><a href="#"><img src="/img/icon_add.gif" alt="Добавить" title="Добавить изделие"></a></th>
         </tr>
     </thead>
     <?php foreach ($orderList as $orderId => $order) { ?>
@@ -85,22 +94,31 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/content/templates/page_header.php';
                 <span class="order-info-name" id="a_<?= $order['order_id'] ?>"><?= $order['name'] ?></span>
                 <div class="order-info div_<?= $order['order_id'] ?>">
                     <table>
-                        <tr>
-                            <td class="r">Дата&nbsp;создания:</td>
-                            <td class="l"><?= MyFuncDatetime::mysql2date($order['date_create']) ?></td>
-                        </tr>
-                        <tr>
-                            <td class="r">Менеджер:</td>
-                            <td class="l"><?= $order['manager'] ?></td>
-                        </tr>
-                        <tr>
-                            <td class="r">Кол-во створок:</td>
-                            <td class="l"><?= $order['flaps_count'] ?></td>
-                        </tr>
+                        <tbody>
+                            <tr>
+                                <td class="r">Срок:</td>
+                                <td class="l"><?= MyFuncDatetime::mysql2date($order['date_end_plan']) ?></td>
+                            </tr>
+                        </tbody>
+                        <tbody class="add-info" id="tbody_<?= $order['order_id'] ?>">
+                            <tr>
+                                <td class="r">Дата&nbsp;создания:</td>
+                                <td class="l"><?= MyFuncDatetime::mysql2date($order['date_create']) ?></td>
+                            </tr>
+                            <tr>
+                                <td class="r">Менеджер:</td>
+                                <td class="l"><?= $order['manager'] ?></td>
+                            </tr>
+                            <tr>
+                                <td class="r">Кол-во створок:</td>
+                                <td class="l"><?= $order['flaps_count'] ?></td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
             </td>
-            <td rowspan="<?= $productCount ?>"><?= MyFuncDatetime::mysql2date($order['date_end_plan']) ?></td>
+            <!--<td rowspan="<?= $productCount ?>"><?= MyFuncDatetime::mysql2date($order['date_end_plan']) ?></td>-->
+            <td rowspan="<?= $productCount ?>"><a href="#"><img src="/img/icon_edit.gif" alt="Редактировать" title="Редактировать заказ"></a></td>
             <?php foreach ($order['products'] as $product) { ?>
                 <?php
                 $color = $colors[$product['color_id']] ?? $colors[1];
@@ -110,31 +128,33 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/content/templates/page_header.php';
                     <?= $order['name'] . '-' . $product['number'] ?>
                     <div class="order-info div_<?= $order['order_id'] ?>">
                         <table>
-                            <tr>
-                                <td class="r">Код&nbsp;двери:</td>
-                                <td class="l"><?= $product['door_code'] ?></td>
-                            </tr>
-                            <tr>
-                                <td class="r">Цвет:</td>
-                                <td class="l"><?= $color['name'] ?></td>
-                                <td style="width:30px; background-color: <?= $color['value'] ?>;"></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td class="l" colspan="2"><?= $color['description'] ?></td>
-                            </tr>
-                            <tr>
-                                <td class="r">Кол-во створок:</td>
-                                <td class="l"><?= $flaps_count ?></td>
-                            </tr>
-                            <tr>
-                                <td class="r">Всего створок:</td>
-                                <td class="l"><?= $flaps_count * $product['count'] ?></td>
-                            </tr>
-                            <tr>
-                                <td class="r">Примечание:</td>
-                                <td class="l"><?= $product['comment'] ?></td>
-                            </tr>
+                            <tbody class="add-info tbody2_<?= $order['order_id'] ?>">
+                                <tr>
+                                    <td class="r">Код&nbsp;двери:</td>
+                                    <td class="l"><?= $product['door_code'] ?></td>
+                                </tr>
+                                <tr>
+                                    <td class="r">Цвет:</td>
+                                    <td class="l"><?= $color['name'] ?></td>
+                                    <td style="width:30px; background-color: <?= $color['value'] ?>;"></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td class="l" colspan="2"><?= $color['description'] ?></td>
+                                </tr>
+                                <tr>
+                                    <td class="r">Кол-во створок:</td>
+                                    <td class="l"><?= $flaps_count ?></td>
+                                </tr>
+                                <tr>
+                                    <td class="r">Всего створок:</td>
+                                    <td class="l"><?= $flaps_count * $product['count'] ?></td>
+                                </tr>
+                                <tr>
+                                    <td class="r">Примечание:</td>
+                                    <td class="l"><?= $product['comment'] ?></td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
                 </td>
@@ -144,7 +164,8 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/content/templates/page_header.php';
                 <td><?= $hatchTypes[$product['hatch_type_id']]['name'] ?></td>
                 <td><?= $lockingTypes[$product['lock_type_id']]['description'] ?? '' ?></td>
                 <td class="c"><?= $product['flaps_count'] ?></td>
-        </tr>
+                <td><a href="#"><img src="/img/icon_edit.gif" alt="Редактировать" title="Редактировать изделие"></a></td>
+                </tr>
         <tr>
         <?php } ?>
         </tr>
