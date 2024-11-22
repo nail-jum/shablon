@@ -1,18 +1,28 @@
 <?php
 
-$weekDays = [ 1 => 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота', 'воскресенье' ];
+$weekDays = [1 => 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота', 'воскресенье'];
+
+$userInfo = 'noname';
+if ($user->isInit) {
+    $userInfo = $user->name;
+    if ($user->name != 'guest') {
+        $userInfo .= ' (<a href="/user_logout">выход</a>)';
+    }
+}
+
+$pageTitle = $pageTitle ?? '-';
 
 ?>
 <!DOCTYPE html>
 <html lang="ru">
 
 <head>
-    <title>Тестовый сайт</title>
+    <title><?= $pageTitle ?></title>
     <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="/content/css/main.css?13">
+    <link rel="stylesheet" type="text/css" href="/content/css/main.css?14">
     <link rel="stylesheet" type="text/css" href="/content/css/menu.css?4">
     <script src="/content/js/jquery-3.6.3.min.js"></script>
-    <script src="/content/js/api-tools.js?3<?=time();?>"></script>
+    <script src="/content/js/api-tools.js?<?= time(); ?>"></script>
     <link rel="icon" href="/favicon.ico">
 </head>
 
@@ -23,7 +33,8 @@ $weekDays = [ 1 => 'понедельник', 'вторник', 'среда', 'ч
         </div>
         <div class="header-title"></div>
         <div class="header-info">
-            <?= date('d.m.Y') . '<br>' . $weekDays[ date('N') ]; ?>
+            <?= date('d.m.Y') . ' ' . $weekDays[date('N')]; ?>
+            <span class="logo-subname"><?= $userInfo ?></span>
         </div>
     </header>
 

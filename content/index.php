@@ -14,6 +14,23 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/autoload.php';
 
 $app = new Application;
 
+// Инициализация пользователя
+$user = new User();
+
+// Имя вызываемой страницы
+$pageName = $request->url['pathArray'][0] ?? '';
+if ($pageName == '') {
+    $pageName = 'index';
+}
+echo $pageName;
+
+if ($pageName != 'user_logon') {
+    // Перенаправление на страницу авторизации неинициализированного пользователя
+    if (!$user->isInit) {
+        header('Location: https://' . $_SERVER['SERVER_NAME'] . '/user_logon' . '?prevUrl=' . $_SERVER['REQUEST_URI']);
+    }
+}
+
 // Массив сегментов адреса страницы
 $urlArray = $app->url['pathArray'];
 
