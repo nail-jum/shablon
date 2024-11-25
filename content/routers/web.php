@@ -42,7 +42,7 @@ switch ($urlFirstSegment) {
         break;
 
     //----------------------------------------
-    case 'test':                    // Страница для тестов
+    case 'test-tree':                    // Страница для тестов
         //$app->contentData = $pageRequest;
         $app->template = 'test-tree.php';
         break;

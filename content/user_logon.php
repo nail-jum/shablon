@@ -14,11 +14,11 @@ if (isset($_POST['requestUrl'])) {
 
 // Проверка пользователя
 if ((strlen($login) > 0) && (strlen($password) > 0)) {
-    $user->logon($login, $password);
+    $app->user->logon($login, $password);
 }
 
 // Перенаправление на страницу сайта
-if ($user->isInit) {
+if ($app->user->isInit) {
     header('Location: ' . $requestUrl);
 }
 
@@ -30,7 +30,7 @@ $(document).ready(function() {
 });
 </script>
 ';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/content/page_header.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/content/templates/page_header.php';
 
 ?>
 
@@ -63,5 +63,5 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/content/page_header.php';
     </pre>
 
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/content/page_footer.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/content/templates/page_footer.php';
 ?>

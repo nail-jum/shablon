@@ -3,9 +3,9 @@
 $weekDays = [1 => 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота', 'воскресенье'];
 
 $userInfo = 'noname';
-if ($user->isInit) {
-    $userInfo = $user->name;
-    if ($user->name != 'guest') {
+if ($app->user->isInit) {
+    $userInfo = $app->user->name;
+    if ($app->user->name != 'guest') {
         $userInfo .= ' (<a href="/user_logout">выход</a>)';
     }
 }
@@ -42,4 +42,7 @@ $pageTitle = $pageTitle ?? '-';
         <?php
         // Подключение главного меню
         include_once('templates/page_menu.php');
+        if ($app->debugInfoExist()) {
+            echo '<div class="debug-info">' . $app->debugInfo() . '</div>';
+        }
         ?>

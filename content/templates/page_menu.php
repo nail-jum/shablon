@@ -9,6 +9,8 @@ $mainMenu = [
     ['title' => 'База данных'           , 'link' => '/db/info'],
     ['title' => 'Загрузка данных'       , 'link' => '/db/load'],
     ['title' => 'App info'              , 'link' => '/app-info/test?d=456'],
+    ['title' => 'Tree'                  , 'link' => '/test-tree'],
+    ['title' => 'Test'                  , 'link' => '/test'],
 ];
 
 $tableMenu = [

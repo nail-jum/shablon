@@ -6,8 +6,10 @@ const DB_CONF = [
         'title' => 'Пользователи',
         'fields' => [
             'user_id'   => ['title' => 'id'                , 'type' => 'integer'],
-            'name'      => ['title' => 'Имя пользователя'  , 'type' => 'text', 'notnull' => 1],
-            'passwd'    => ['title' => 'Пароль'            , 'type' => 'text'],
+            'name'      => ['title' => 'Имя пользователя'  , 'type' => 'text'],
+            'login'     => ['title' => 'Логин'             , 'type' => 'text', 'notnull' => 1],
+            'password'  => ['title' => 'Пароль'            , 'type' => 'text'],
+            'token'     => ['title' => 'Пароль'            , 'type' => 'text'],
         ],
         'primary_key' => 'user_id',
     ],
@@ -199,10 +201,10 @@ const DB_CONF = [
 const DB_DEFAULT_DATA = [
 
     'users' => [
-        'fields' => ['name', 'passwd'],
+        'fields' => ['login', 'password', 'token'],
         'data' => [
-            ['admin', 'admin'],
-            ['user', 'user'],
+            ['admin', 'admin', '1234'],
+            ['user', 'user', '5678'],
         ],
     ],
 

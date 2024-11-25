@@ -63,7 +63,7 @@ footer {
     background-color: #40a8ff;
 }
 
-/* Блоки сообщений об ошибках */
+/* Блоки сообщений об ошибках и отладочной информации */
 div.error {
     width: 800px;
     margin: 0 auto 8px;
@@ -77,6 +77,14 @@ div.warning {
     margin: 0 auto 8px;
     padding: 8px;
     border: solid 1px blue;
+    text-align: center;
+}
+
+div.debug-info {
+    min-width: 800px;
+    margin: 0 auto 8px;
+    padding: 8px;
+    border: solid 1px gray;
     text-align: center;
 }
 

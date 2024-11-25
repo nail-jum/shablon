@@ -15,6 +15,7 @@ class Application
 
     public function __construct()
     {
+        /*
         // IP-адрес клиента
         $this->user['ip']       = $_SERVER['REMOTE_ADDR'];
         // ОС и браузер клиента
@@ -23,6 +24,9 @@ class Application
         $this->user['referer']  = $_SERVER['HTTP_REFERER'] ?? '';
         // доступ пользователя к странице (по умолчанию доступа нет)
         $this->user['access']  = false;
+        */
+        
+        $this->user = new User();
 
         $this->url['full']      = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         // протокол запроса (http, https)
@@ -80,6 +84,11 @@ class Application
         $function = $backtrace[0]['function'];
 
         $this->debugMessages[] = $function . ': ' . $text;
+    }
+
+    public function debugInfoExist()
+    {
+        return (count($this->debugMessages) > 0);
     }
 
     public function debugInfo()

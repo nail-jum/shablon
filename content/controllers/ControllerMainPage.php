@@ -9,7 +9,7 @@ class ControllerMainPage
     static function run()
     {
         global $app;
-        $app->user['access'] = true;
+        //$app->user['access'] = true;
         $app->template = 'main_page.php';
 
         $testMessage = 'Test message';

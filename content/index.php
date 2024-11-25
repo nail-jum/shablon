@@ -12,24 +12,29 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/autoload.php';
  * $app->script;     // информация о выполняемом скрипте
  */
 
+// Инициализация приложения
+//global $app;
 $app = new Application;
 
+/*
 // Инициализация пользователя
-$user = new User();
+//$user = new User();
 
 // Имя вызываемой страницы
-$pageName = $request->url['pathArray'][0] ?? '';
+$pageName = $app->url['pathArray'][0] ?? '';
 if ($pageName == '') {
     $pageName = 'index';
 }
-echo $pageName;
+//$app->debug($pageName);
+$app->debug('<pre>' . print_r($app, true) . '</pre>');
 
 if ($pageName != 'user_logon') {
     // Перенаправление на страницу авторизации неинициализированного пользователя
-    if (!$user->isInit) {
+    if (!$app->user->isInit) {
         header('Location: https://' . $_SERVER['SERVER_NAME'] . '/user_logon' . '?prevUrl=' . $_SERVER['REQUEST_URI']);
     }
 }
+*/
 
 // Массив сегментов адреса страницы
 $urlArray = $app->url['pathArray'];
@@ -43,6 +48,11 @@ switch ($urlArray[0]) {
     case 'api':                 // Запросы API
         $router = 'api.php';
         break;
+
+    //----------------------------------------
+    case 'user_logon':                 //
+        require_once $_SERVER['DOCUMENT_ROOT'] . '/content/user_logon.php';
+        exit;
 
     //----------------------------------------
     default:                    // Веб-запросы
