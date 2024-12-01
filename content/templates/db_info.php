@@ -73,6 +73,7 @@ include_once('templates/page_header.php');
         <th rowspan="2"></th>
         <th rowspan="2">описание</th>
         <th rowspan="2">таблица</th>
+        <th rowspan="2"></th>
         <th colspan="5">поле</th>
     </tr>
     <tr>
@@ -111,14 +112,14 @@ include_once('templates/page_header.php');
 </table>
 <br>
 
-<!--
+
 <a id="show-debug-info" href="#">Debug Info</a>
 <div id="debug-info">
     <pre>
     <?php echo print_r($dbInfo, true); ?>
     </pre>
 </div>
--->
+
 
 
 <?php include_once('templates/page_footer.php'); ?>

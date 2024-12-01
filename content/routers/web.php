@@ -65,7 +65,7 @@ switch ($urlFirstSegment) {
 
 
         //----------------------------------------
-    case 'table':                   // Работа с базой данных
+    case 'table':                   // Работа с таблицей базы данных
         //list($contentData, $template) = ControllerTable::run($pageRequest);
         list($contentData, $template) = ControllerTable::run();
         //$contentData = ControllerDb::run($pageRequest);

@@ -128,12 +128,14 @@ foreach ($tableArray as $rowNumber => $row) {
 }
 $jsData .= "}," . PHP_EOL;
 
-?>
+include_once $_SERVER['DOCUMENT_ROOT'] . '/content/templates/page_header.php';
+/*
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+*/
+?>
     <style>
         * {
             font-family: Verdana, Geneva, Tahoma, sans-serif;
@@ -435,6 +437,9 @@ $jsData .= "}," . PHP_EOL;
     </table>
             -->
 
+<?php
+include_once $_SERVER['DOCUMENT_ROOT'] . '/content/templates/page_footer.php';
+/*
 </body>
-
 </html>
+*/

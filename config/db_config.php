@@ -5,11 +5,12 @@ const DB_CONF = [
     'users' => [
         'title' => 'Пользователи',
         'fields' => [
-            'user_id'   => ['title' => 'id'                , 'type' => 'integer'],
+            'user_id'   => ['title' => 'id'                , 'type' => 'integer', 'notnull' => 1],
             'name'      => ['title' => 'Имя пользователя'  , 'type' => 'text'],
             'login'     => ['title' => 'Логин'             , 'type' => 'text', 'notnull' => 1],
             'password'  => ['title' => 'Пароль'            , 'type' => 'text'],
-            'token'     => ['title' => 'Пароль'            , 'type' => 'text'],
+            'token'     => ['title' => 'Токен'             , 'type' => 'text'],
+            'locktime'  => ['title' => 'Блокировка'        , 'type' => 'datetime'],
         ],
         'primary_key' => 'user_id',
     ],
@@ -17,7 +18,7 @@ const DB_CONF = [
     'orders' => [
         'title' => 'Заказы',
         'fields' => [
-            'order_id'      => ['title' => 'id'                         , 'type' => 'integer'],
+            'order_id'      => ['title' => 'id'                         , 'type' => 'integer', 'notnull' => 1],
             'name'          => ['title' => 'Наименование'               , 'type' => 'text'],
             'manager'       => ['title' => 'Менеджер'                   , 'type' => 'text'],
             'date_create'   => ['title' => 'Дата создания'              , 'type' => 'date'],
@@ -36,7 +37,7 @@ const DB_CONF = [
     'products' => [
         'title' => 'Изделия',
         'fields' => [
-            'product_id'    => ['title' => 'id'                     , 'type' => 'integer'],
+            'product_id'    => ['title' => 'id'                     , 'type' => 'integer', 'notnull' => 1],
             'order_id'      => ['title' => 'id заказа'              , 'type' => 'integer'],
             'number'        => ['title' => 'Порядковый номер'       , 'type' => 'integer'],
             'door_code'     => ['title' => 'Код двери'              , 'type' => 'integer'],
@@ -55,7 +56,7 @@ const DB_CONF = [
     'materials' => [
         'title' => 'Материалы (сырье)',
         'fields' => [
-            'material_id'   => ['title' => 'id'                 , 'type' => 'integer'],
+            'material_id'   => ['title' => 'id'                 , 'type' => 'integer', 'notnull' => 1],
             'name'          => ['title' => 'Наименование'       , 'type' => 'text'],
             'measure_unit'  => ['title' => 'Единица измерения'  , 'type' => 'text'],
             'description'   => ['title' => 'Описание'           , 'type' => 'text'],
@@ -66,7 +67,7 @@ const DB_CONF = [
     'semiproducts' => [
         'title' => 'Полуфабрикаты',
         'fields' => [
-            'semiproduct_id'    => ['title' => 'id'                 , 'type' => 'integer'],
+            'semiproduct_id'    => ['title' => 'id'                 , 'type' => 'integer', 'notnull' => 1],
             'product_id'        => ['title' => 'id изделия'         , 'type' => 'integer'],
             'name'              => ['title' => 'Наименование'       , 'type' => 'text'],
             'code'              => ['title' => 'Код'                , 'type' => 'text'],
@@ -78,7 +79,7 @@ const DB_CONF = [
     'operations' => [
         'title' => 'Операции',
         'fields' => [
-            'operation_id'      => ['title' => 'id'                 , 'type' => 'integer'],
+            'operation_id'      => ['title' => 'id'                 , 'type' => 'integer', 'notnull' => 1],
             'product_id'        => ['title' => 'id изделия'         , 'type' => 'integer'],
             'semiproduct_id'    => ['title' => 'Полуфабрикат'       , 'type' => 'integer'],
             'operation_type'    => ['title' => 'Тип операции'       , 'type' => 'integer'],
@@ -95,7 +96,7 @@ const DB_CONF = [
     'semiproduct_types' => [
         'title' => 'Виды полуфабрикатов',
         'fields' => [
-            'semiproduct_type_id' => ['title' => 'id'                 , 'type' => 'integer'],
+            'semiproduct_type_id' => ['title' => 'id'               , 'type' => 'integer', 'notnull' => 1],
             'name'              => ['title' => 'Наименование'       , 'type' => 'text'],
             'description'       => ['title' => 'Описание'           , 'type' => 'text'],
         ],
@@ -105,7 +106,7 @@ const DB_CONF = [
     'operation_types' => [
         'title' => 'Виды операций',
         'fields' => [
-            'operation_type_id' => ['title' => 'id'                 , 'type' => 'integer'],
+            'operation_type_id' => ['title' => 'id'                 , 'type' => 'integer', 'notnull' => 1],
             'name'              => ['title' => 'Наименование'       , 'type' => 'text'],
             'description'       => ['title' => 'Описание'           , 'type' => 'text'],
         ],
@@ -115,7 +116,7 @@ const DB_CONF = [
     'specifications' => [
         'title' => 'Спецификации',
         'fields' => [
-            'specification_id'    => ['title' => 'id'                 , 'type' => 'integer'],
+            'specification_id'    => ['title' => 'id'                 , 'type' => 'integer', 'notnull' => 1],
             'operation_type_id'   => ['title' => 'id'                 , 'type' => 'integer'],
             'semiproduct_type_id' => ['title' => 'id'                 , 'type' => 'integer'],
             'name'                => ['title' => 'Наименование'       , 'type' => 'text'],
@@ -128,7 +129,7 @@ const DB_CONF = [
     'list_colors' => [
         'title' => 'Цвета',
         'fields' => [
-            'item_id'     => ['title' => 'id'               , 'type' => 'integer'],
+            'item_id'     => ['title' => 'id'               , 'type' => 'integer', 'notnull' => 1],
             'name'        => ['title' => 'Наименование'     , 'type' => 'text'],
             'description' => ['title' => 'Описание'         , 'type' => 'text'],
             'value'       => ['title' => 'Значение'         , 'type' => 'text'],

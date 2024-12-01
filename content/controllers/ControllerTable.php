@@ -2,6 +2,17 @@
 
 /**
  * Контроллер для работы с таблицами
+ * - - - - - - - - - - - - - - - -
+ * Получаемый запрос:
+ * <имя домена>/table/<имя таблицы>/<id записи>
+ * - - - - - - - - - - - - - - - -
+ * Алгоритм работы контроллера
+ * 1) Если не указано имя таблицы, выводится список стаблиц
+ * 2) Если не указан id записи, выводится список записей таблицы
+ * 3) Если id указан (в т.ч. ноль), действие зависит от действия:
+ *  3.1)
+ * - - - - - - - - - - - - - - - -
+ *
  */
 
 class ControllerTable
@@ -10,26 +21,19 @@ class ControllerTable
     {
         global $app;
         // Массив сегментов адреса страницы
-        //$pagePathArray = $pageRequest->url['pathArray'];
         $pagePathArray = $app->url['pathArray'];
-        if ($pagePathArray[0] != 'table') {
-            return [
-                'status' => 'error',
-                'data' => $app->url['path'],
-                'info' => ["Неверный выбор обработчика для запроса $pagePathArray[0]"],
-            ];
-        }
-        $tableName = $pagePathArray[1] ?? false;
-        $rowId = $pagePathArray[2] ?? false;
+        $tableName  = $pagePathArray[1] ?? false;
+        $rowId      = $pagePathArray[2] ?? false;
 
+        // Таблица не указана
         if ($tableName == false) {
-            $contentData = Db::getDbStructure();
+            $contentData = Db::getDbStructure();    // getTableList()
             $template = 'db_info.php';
             return [$contentData, $template];
         }
 
-        $action = $_GET['_action'] ?? $_POST['_action'] ?? '';
-        $userKey = $_GET['_user_key'] ?? $_POST['_user_key'] ?? '';
+        $action      = $_GET['_action']       ?? $_POST['_action'] ?? '';
+        //$userKey     = $_GET['user-token']    ?? $_POST['user-token'] ?? '';
         $refererPage = $_GET['_referer-page'] ?? $_POST['_referer-page'] ?? '';
 
         $table = new Table($tableName);
@@ -51,8 +55,9 @@ class ControllerTable
                 $contentData = Table::editSubmit($action, $tableName, $rowId);
                 //$contentData = ['status' => 'ok', 'data' => $_POST,];
                 // Перенаправление на страницу результатов
-                header("Location: $refererPage");
+                //header("Location: $refererPage");
                 //$template = 'debug_page.php';     // для тестирования
+                $template = 'app_debug.php';     // для тестирования
                 break;
 
             //----------------------------------------

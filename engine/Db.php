@@ -201,6 +201,8 @@ class Db
                     "\"{$fieldName}\" {$field['type']}"
                     . ($notNull ? "  NOT NULL" : "")
                     . (($fieldName == $primaryKeyField) ? ' PRIMARY KEY' : '')
+                    //. (($fieldName == $primaryKeyField) ? ' NOT NULL PRIMARY KEY' : '')
+                    //. (($fieldName == $primaryKeyField) ? ' AUTO_INCREMENT' : '')
                     . ($defaulValue ? " DEFAULT '$defaulValue'" : '');
             }
             $sql = "CREATE TABLE IF NOT EXISTS \"$tableName\" (" . implode(',', $sqlArray) . ")";

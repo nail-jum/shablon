@@ -186,7 +186,6 @@ class Table
                 break;
         }
 
-
         return [
             'status' => 'ok',
             'data' => [

@@ -10,10 +10,10 @@ if ($contentData['status'] == 'warning') {
 }
 */
 $actionConf = [
-    'new'  => ['title' => 'новая запись', 'submit-action' => 'add'],
-    'edit' => ['title' => 'редактирование записи', 'submit-action' => 'upd'],
-    'copy' => ['title' => 'копирование записи', 'submit-action' => 'add'],
-    'del'  => ['title' => 'удаление записи', 'submit-action' => 'del'],
+    'new'  => ['submit-action' => 'add', 'title' => 'новая запись'          ],
+    'edit' => ['submit-action' => 'upd', 'title' => 'редактирование записи' ],
+    'copy' => ['submit-action' => 'add', 'title' => 'копирование записи'    ],
+    'del'  => ['submit-action' => 'del', 'title' => 'удаление записи'       ],
 ];
 
 $refererPage = $_SERVER['HTTP_REFERER'] ?? '/';     // предыдущая страница
